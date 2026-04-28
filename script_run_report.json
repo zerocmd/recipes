@@ -5,7 +5,7 @@
       "--help"
     ],
     "exit_code": 0,
-    "duration_s": 0.199,
+    "duration_s": 0.196,
     "stdout_tail": "usage: health_check.py [-h]\n\nIntegration health check.\n\noptions:\n  -h, --help  show this help message and exit",
     "stderr_tail": "",
     "trace_ids": [],
@@ -18,7 +18,7 @@
       "--help"
     ],
     "exit_code": 0,
-    "duration_s": 0.187,
+    "duration_s": 0.193,
     "stdout_tail": "",
     "stderr_tail": "",
     "trace_ids": [],
@@ -31,7 +31,7 @@
       "--help"
     ],
     "exit_code": 0,
-    "duration_s": 0.2,
+    "duration_s": 0.199,
     "stdout_tail": "usage: business_context.py [-h]\n                           {list,upload-hr,upload-cmdb,replace,delete} ...\n\nUse case 3: business context uploads (HR / CMDB).\n\npositional arguments:\n  {list,upload-hr,upload-cmdb,replace,delete}\n\noptions:\n  -h, --help            show this help message and exit",
     "stderr_tail": "",
     "trace_ids": [],
@@ -44,7 +44,7 @@
       "--help"
     ],
     "exit_code": 0,
-    "duration_s": 0.192,
+    "duration_s": 0.207,
     "stdout_tail": "usage: investigation_pipeline_report.py [-h]\n                                        {pending-review,by-application,by-tag,sla,custom} ...\n\nUse case 5: investigation pipeline visibility and SLA tracking.\n\npositional arguments:\n  {pending-review,by-application,by-tag,sla,custom}\n    pending-review      High-severity investigations awaiting analyst review.\n    by-application      Investigations created by a specific integration.\n    by-tag              Investigations carrying a tag.\n    sla                 Latency report from\n                        createdTime/completedTime/closedTime.\n    custom              Run a free-form OData filter.\n\noptions:\n  -h, --help            show this help message and exit",
     "stderr_tail": "",
     "trace_ids": [],
@@ -57,7 +57,7 @@
       "--help"
     ],
     "exit_code": 0,
-    "duration_s": 0.198,
+    "duration_s": 0.194,
     "stdout_tail": "usage: mssp_multi_tenant.py [-h] [--filter-org FILTER_ORG]\n                            {summary,assignable-users} ...\n\nUse case 6: MSSP / multi-tenant operations.\n\npositional arguments:\n  {summary,assignable-users}\n\noptions:\n  -h, --help            show this help message and exit\n  --filter-org FILTER_ORG\n                        OData filter applied to the org list, e.g. \"role eq\n                        'responder'\"",
     "stderr_tail": "",
     "trace_ids": [],
@@ -70,7 +70,7 @@
       "--help"
     ],
     "exit_code": 0,
-    "duration_s": 0.046,
+    "duration_s": 0.042,
     "stdout_tail": "usage: sdk_live_test.py [-h]\n\nSmoke-test the SDK against the live Command Zero API.\n\noptions:\n  -h, --help  show this help message and exit",
     "stderr_tail": "",
     "trace_ids": [],
@@ -83,7 +83,7 @@
       "--help"
     ],
     "exit_code": 0,
-    "duration_s": 0.175,
+    "duration_s": 0.189,
     "stdout_tail": "usage: template_investigation.py [-h] [--list] [--template TEMPLATE]\n                                 [--lead LEAD] [--title TITLE] [--tag TAGS]\n                                 [--start START_TIME] [--end END_TIME]\n                                 [--postback-url POSTBACK_URL]\n                                 [--postback-token POSTBACK_TOKEN]\n\nUse case 2: template-based investigation for recurring workflows.\n\noptions:\n  -h, --help            show this help message and exit\n  --list                List available templates and exit.\n  --template TEMPLATE   Template id or slug name (e.g. users-last-day).\n  --lead LEAD           Repeatable. Format TYPE:value, e.g.\n                        EMAIL_ADDRESS:user@x.com\n  --title TITLE\n  --tag TAGS\n  --start START_TIME    ISO-8601 startTime\n  --end END_TIME        ISO-8601 endTime\n  --postback-url POSTBACK_URL\n  --postback-token POSTBACK_TOKEN",
     "stderr_tail": "",
     "trace_ids": [],
@@ -96,7 +96,7 @@
       "--help"
     ],
     "exit_code": 0,
-    "duration_s": 0.192,
+    "duration_s": 0.186,
     "stdout_tail": "usage: alert_investigation.py [-h] [--demo] [--alert-type ALERT_TYPE]\n                              [--alert-data ALERT_DATA]\n                              [--alert-schema ALERT_SCHEMA] [--title TITLE]\n                              [--tag TAGS] [--postback-url POSTBACK_URL]\n                              [--postback-token POSTBACK_TOKEN]\n\nUse case 1: alert-triggered investigation from a SIEM/SOAR.\n\noptions:\n  -h, --help            show this help message and exit\n  --demo                Submit the bundled email-malware example payload.\n  --alert-type ALERT_TYPE\n                        Built-in or custom alert type name (e.g.\n                        EmailMalware).\n  --alert-data ALERT_DATA\n                        Path to a JSON file holding alertData. Use '-' for\n                        stdin.\n  --alert-schema ALERT_SCHEMA\n                        Path to a JSON file holding alertSchema (list of\n                        {path,type}).\n  --title TITLE\n  --tag TAGS\n  --postback-url POSTBACK_URL\n  --postback-token POSTBACK_TOKEN",
     "stderr_tail": "",
     "trace_ids": [],
@@ -109,7 +109,7 @@
       "--help"
     ],
     "exit_code": 0,
-    "duration_s": 0.193,
+    "duration_s": 0.192,
     "stdout_tail": "usage: automated_remediation.py [-h] {contain,undo,templates} ...\n\nUse case 4: automated remediation after investigation completes.\n\npositional arguments:\n  {contain,undo,templates}\n    contain             Evaluate verdict and execute a remediation if\n                        threshold met.\n    undo                Reverse a previously executed remediation.\n    templates           List remediation templates, optionally filtered by\n                        subject type.\n\noptions:\n  -h, --help            show this help message and exit",
     "stderr_tail": "",
     "trace_ids": [],
@@ -122,7 +122,7 @@
       "--help"
     ],
     "exit_code": 0,
-    "duration_s": 0.184,
+    "duration_s": 0.197,
     "stdout_tail": "usage: postback_receiver.py [-h] [--host HOST] [--port PORT]\n                            [--auto-remediate]\n\nCompanion to use cases 1 and 4: receive Command Zero postbacks.\n\noptions:\n  -h, --help        show this help message and exit\n  --host HOST\n  --port PORT\n  --auto-remediate  Trigger remediation when verdict is malicious and\n                    confidence high.",
     "stderr_tail": "",
     "trace_ids": [],
@@ -133,7 +133,7 @@
     "script": "health_check.py",
     "args": [],
     "exit_code": 0,
-    "duration_s": 0.696,
+    "duration_s": 0.812,
     "stdout_tail": "Health: ok\nAccessible organizations: 1\n  - 51c264ff-5a98-4f15-b7e1-07158d35151c  role=Investigators   name=warniCo",
     "stderr_tail": "",
     "trace_ids": [],
@@ -146,7 +146,7 @@
       "list"
     ],
     "exit_code": 0,
-    "duration_s": 0.509,
+    "duration_s": 0.501,
     "stdout_tail": "  803247f1-cb0a-4062-96cd-d1de448c303f  status=ready       records=     1  Very Unimportant List\n  d32db677-a76a-4ecd-96cc-1e0a68db6507  status=ready       records=     1  Very Unimportant List\n  36446ff0-987b-4a71-9927-d13998f65439  status=ready       records=   110  Company Assets - APJC and others\n  d0105699-1cca-4c4f-86d6-ee2151af40f8  status=ready       records=     3  Q - Email addresses (External Red Team) \n  fe8cb768-f254-45b9-b669-5a41b2da8135  status=ready       records=     4  Infrastructure IP's\n  c88ca8b9-689e-4eb7-9d13-dd06fcd248a8  status=ready       records=     1  Red Team Members (Internal) \n  2085084c-44b8-443e-b935-f4cc4c441152  status=ready       records=    12  Known Password Spray IP's",
     "stderr_tail": "",
     "trace_ids": [],
@@ -159,7 +159,7 @@
       "pending-review"
     ],
     "exit_code": 0,
-    "duration_s": 0.581,
+    "duration_s": 0.59,
     "stdout_tail": "5 investigation(s) awaiting review\n  c6356c4c-ffb6-458b-b8d2-c144e8a9e80e  high           pending-review  by=c0/Command Zero              System Compromise with NetWire RAT Targeting XT1050 Product \n  37da31cd-cc22-4759-aca0-2f2c8b62aaf8  high           pending-review  by=c0/Command Zero              Account Compromise: Senior Researcher Account Accessed from \n  26495860-4531-4656-be5d-0589e93009a9  high           pending-review  by=c0/Command Zero              System Compromise: NetWire RAT Infection with Persistence vi\n  25db52f0-a789-4688-b2ab-5c51bdbfa6d6  high           pending-review  by=c0/Command Zero              Account Compromise: Senior Researcher Account Accessed from \n  02160238-cb73-417e-9b91-a0b718a68897  high           pending-review  by=c0/Command Zero              Account Compromise: Robert Hatley's Microsoft Entra ID Accou",
     "stderr_tail": "",
     "trace_ids": [],
@@ -174,7 +174,7 @@
       "high"
     ],
     "exit_code": 0,
-    "duration_s": 0.604,
+    "duration_s": 0.602,
     "stdout_tail": "5 investigation(s) awaiting review\n  c6356c4c-ffb6-458b-b8d2-c144e8a9e80e  high           pending-review  by=c0/Command Zero              System Compromise with NetWire RAT Targeting XT1050 Product \n  37da31cd-cc22-4759-aca0-2f2c8b62aaf8  high           pending-review  by=c0/Command Zero              Account Compromise: Senior Researcher Account Accessed from \n  26495860-4531-4656-be5d-0589e93009a9  high           pending-review  by=c0/Command Zero              System Compromise: NetWire RAT Infection with Persistence vi\n  25db52f0-a789-4688-b2ab-5c51bdbfa6d6  high           pending-review  by=c0/Command Zero              Account Compromise: Senior Researcher Account Accessed from \n  02160238-cb73-417e-9b91-a0b718a68897  high           pending-review  by=c0/Command Zero              Account Compromise: Robert Hatley's Microsoft Entra ID Accou",
     "stderr_tail": "",
     "trace_ids": [],
@@ -187,7 +187,7 @@
       "sla"
     ],
     "exit_code": 0,
-    "duration_s": 0.58,
+    "duration_s": 0.565,
     "stdout_tail": "Completed investigations: 0\nTime to investigate complete: no samples\nTime to analyst close      : no samples",
     "stderr_tail": "",
     "trace_ids": [],
@@ -200,8 +200,8 @@
       "summary"
     ],
     "exit_code": 0,
-    "duration_s": 4.749,
-    "stdout_tail": "1 accessible organization(s)\norganizationId                          role            open  users  name\n  51c264ff-5a98-4f15-b7e1-07158d35151c  Investigators   2155     59  warniCo",
+    "duration_s": 4.576,
+    "stdout_tail": "1 accessible organization(s)\norganizationId                          role            open  users  name\n  51c264ff-5a98-4f15-b7e1-07158d35151c  Investigators   2156     59  warniCo",
     "stderr_tail": "",
     "trace_ids": [],
     "created_investigation_ids": [],
@@ -213,7 +213,7 @@
       "assignable-users"
     ],
     "exit_code": 0,
-    "duration_s": 0.613,
+    "duration_s": 0.653,
     "stdout_tail": "  16f07915-52e0-4052-b56c-ca750d5dc6fd  administrator   nick+warnicorn@cmdzero.io                 Nick Stall\n  9c993928-9d89-417d-8a6f-e1a49316b89e  administrator   dean.turner@cmdzero.io                    Dean  Turner\n  7344dd05-b7b2-45ce-9253-d204585f5e9a  administrator   michael.brame+warnicorn@cmdzero.io        Q Brame\n  2e0f788f-25d4-4152-ad80-a1727af25e71  administrator   adam@warnicorn.com                        Adam Fasen\n  ac4baafb-c2b3-40a4-9789-dd351e7823ed  administrator   cam@cmdzero.io                            Cameron Dansie\n  bf7c94da-816a-4b9c-8100-7a0878853d20  investigator    sei+inv@cmdzero.io                        sei lee\n  35428941-b96c-4735-9a34-fedd05880df5  administrator   riyad.abdullayev+warnicorn-admin@cmdzero.io  Riyad A\n  563e9a2c-a84e-4424-aad4-63c48fb2dbb7  administrator   tyler.mowbray+warnicorn@cmdzero.io        Tyler Mowbray\n  06b80d06-d10a-419c-b68b-787c1a66fb08  administrator   princely+prod@cmdzero.io                  Princely Dmello\n  a50856a0-1dcb-4bf5-b439-7795c21ca6f5  disabled        scott+soc-2-2025@cmdzero.io               Scott Dunlop (SOC-2 Evidence)\n  c506db9c-2871-4d24-9619-24bb055cd90b  administrator   mandeep.sandhu@spycloud.com               Mandeep  Sandhu\n  61f442d3-98d1-45fb-96f1-82e5b5853651  administrator   reony+admin@cmdzero.io                    Reony Tonneyck\n  9a2aea4f-81fa-4966-808c-a0b66f77e1ab  administrator   tyler+warn@cmdzero.io                     Tyler Field\n  2c044f78-0373-4440-b5d3-ac3b8244d781  administrator   charles.stearns+warnicorn@cmdzero.io      Charles Stearns\n  30d82cfb-7b81-43ed-aaea-af2da197cf14  administrator   chantelle+warnicorn@cmdzero.io            Chantelle Lee\n  6c992825-7427-4748-b9ca-6d74ee75cc1c  administrator   craig.davison+warnicorn@cmdzero.io        Craig D\n  b8822bee-fa05-47a8-b779-0d1f131d7327  disabled        john.conti+warn@cmdzero.io                John Conti\n  a297c7f4-6ad2-44f5-ac23-c9bc1465daf7  administrator   michael+new_user_doc_test@cmdzero.io      Michael Auger\n  95a9770a-d833-4c18-8c3f-16506ed04ed1  administrator   alex+warnicornprod@cmdzero.io             Alex Saint Croix\n  bf693be6-6fa9-4f17-8ea7-cdb4be5f4ac7  investigator    michael+investigator@cmdzero.io           Michael Auger\n  5f0e4642-6b91-44db-9ad7-01e519239626  administrator   alfred+faststart@cmdzero.io               Alfred Huger\n  6c1a64be-caaa-4637-931f-930750fa2f54  administrator   eric+faststart@cmdzero.io                 Eric Hulse\n  241433e9-d6fd-48bb-ac70-73d072376a4c  administrator   michael+faststart@cmdzero.io              Michael Auger\n  06191f48-a3ba-410d-98f7-d129182376e2  investigator    b3lcher+new@gmail.com                     Tim Belcher\n  62ecc32d-cc32-4fff-8330-1a43c11b0abc  administrator   michael.behringer@cmdzero.io              Michael Behringer\n  7b89cec5-8146-4e05-b120-c1d9a1f294c4  administrator   andrew+warnicornprod@cmdzero.io           Andrew Klager\n  17d6a1d0-d948-4353-920c-200322dbebef  administrator   abhinav+warnicornprod@cmdzero.io          Abhinav Pathak\n  3714d8ed-f2bb-4fe9-becf-c657acb7565e  administrator   erdem@cmdzero.io                          Erdem Menges\n  da3bc0de-45c3-4651-9625-7f56ae72515f  administrator   dean+war@cmdzero.io                       Dean De Beer\n  7205d91f-3647-4ce1-8c73-280021de6265  administrator   sei+2@warnicorn.com                       Sei Bossman\n  aeae676f-d732-4688-831d-c62004506bb1  administrator   mo+warnicorn@cmdzero.io                   Mo 2 Sachedina\n  00df96e1-69f6-4621-a474-e1e1c4fd4d90  administrator   charles+warn@cmdzero.io                   Charles Duffy\n  cae608e9-8bd1-4696-b832-83f0e9063ae7  investigator    reony+warnicorn@cmdzero.io                Reony Tonneyck\n  6f195aed-0a8f-4395-9a56-e43ae2978eee  disabled        scott.griffin+warnicorn@cmdzero.io        Scott Griffin\n  936f131a-fc17-459c-b0f0-a0b2f096fbea  administrator   scott+warnicorn@cmdzero.io                Scott D\n  bdada2ce-09c8-4f2b-9a91-6f577f4bde00  investigator    dov@cmdzero.io                            Dov Yoran\n  ab94e71b-e08a-4c9f-8239-940290af2091  administrator   adam+warnicorn@cmdzero.io                 Adam Fasen\n  bdd165de-1b6a-46ca-b9de-9fae54f72388  disabled        john.zenick+warnicorn@cmdzero.io          John Zenick\n  202893a3-b0f7-4f73-ab92-6d27ea700afb  investigator    jason.rasmussen@me.com                    Jason Rasmussen\n  fecfb8ba-6869-47cb-9807-307d895bb8de  administrator   sei+1@warnicorn.com                       sei lee\n  8a973f97-565a-4a84-9599-0b46d6022df2  administrator   natalie@warnicorn.com                     Natalie Dean\n  46a5a983-9107-48f0-a3ab-13ed40c0c2fa  administrator   tega@warnicorn.com                        tega o\n  079ec4bf-a68b-496d-b3d0-370c5b339dbb  administrator   michael@warnicorn.com                     Michael Auger\n  224067ce-38fb-4bd7-aee9-a7fdca84c0ac  administrator   kiki@warnicorn.com                        Kiki Preteau\n  784a5db4-7c00-4e67-bc60-cffb7974da17  administrator   dean.manchul@warnicorn.com                Dean Manchul\n  6d7f8384-248f-4c37-825c-635e44be9526  administrator   sei@warnicorn.com                         Sei Lee\n  1e19dc31-c600-468b-9306-a313e14ac361  administrator   alfred@warnicorn.com                      Alfred Huger\n  e584eae6-b1a8-4a50-8629-5ce255dacd56  administrator   eric@warnicorn.com                        Eric Hulse\n  7259a669-f19d-415d-83a3-d30c0f2bbd13  disabled        randy@cmdzero.io                          Randy Thomas\n  81bef40d-06c4-44df-8858-d17d1ccd85b0  administrator   mo@cmdzero.io                             Mo Sachedina",
     "stderr_tail": "",
     "trace_ids": [],
@@ -224,11 +224,11 @@
     "script": "sdk_live_test.py",
     "args": [],
     "exit_code": 1,
-    "duration_s": 6.503,
-    "stdout_tail": "\n=== health ===\n  \u2713  health.check status \u2014 ok\n\n=== organizations (GET-based listing) ===\n  \u2713  organizations.list count \u2014 1\n  \u2713    org warniCo \u2014 role=Investigators\n\n=== applications ===\n  \u2713  applications.list (first 5) \u2014 3\n  \u2713  applications.get \u2014 name=JBL Demo role=Investigators\n\n=== users ===\n  \u2713  users.list (first 5) \u2014 5\n  \u2713  users.get \u2014 email=tyler.olsen@cmdzero.io role=administrator\n\n=== catalog ===\n  \u2713  catalog.list (first 5) \u2014 5\n  \u2713  catalog.alert_types (first 5) \u2014 5\n  \u2713  catalog.get \u2014 id=CISCO_DUO_USERNAME isAlert=False\n\n=== investigations (read-only) ===\n  \u2713  investigations.list (first 10) \u2014 10\n  \u2713  investigations.get \u2014 id=fa18afc7-dd2f-466a-9a9b-a33c379f8b8c status=investigating severity=\n  \u2713  investigations.list filter=pending-review \u2014 265\n  \u2713  investigations.list filter=high-or-critical \u2014 80\n\n=== remediations (read-only) ===\n  \u2713  remediations.list (first 5) \u2014 5\n  \u2713  remediations.get \u2014 id=3e9ad0b0-bd4b-4eaa-bd0f-5065922938d1 status=success template=Enable Microsoft Entra User by User Principal Name\n\n=== investigation templates ===\n  \u2713  investigation_templates.list (first 5) \u2014 5\n  \u2713  investigation_templates.get \u2014 id=896d002b-0edf-4a2a-92f3-6b8dfe9c9277 name=Q - UPN to PWN\n\n=== remediation templates ===\n  \u2713  remediation_templates.list (first 5) \u2014 5\n  \u2717  remediation_templates.*: [404] not found (trace=4ee7f6294f3977dc49ecf5273a750da0)\n\n=== business context ===\n  \u2713  business_context.list (first 5) \u2014 5\n  \u2713  business_context.get \u2014 id=803247f1-cb0a-4062-96cd-d1de448c303f status=ready records=1\n\n=== error handling: 404 path ===\n  \u2713  404 mapped to typed error \u2014 ForbiddenError status=403\n\nFAIL: 1 unexpected failure(s)",
+    "duration_s": 6.641,
+    "stdout_tail": "\n=== health ===\n  \u2713  health.check status \u2014 ok\n\n=== organizations (GET-based listing) ===\n  \u2713  organizations.list count \u2014 1\n  \u2713    org warniCo \u2014 role=Investigators\n\n=== applications ===\n  \u2713  applications.list (first 5) \u2014 3\n  \u2713  applications.get \u2014 name=JBL Demo role=Investigators\n\n=== users ===\n  \u2713  users.list (first 5) \u2014 5\n  \u2713  users.get \u2014 email=tyler.olsen@cmdzero.io role=administrator\n\n=== catalog ===\n  \u2713  catalog.list (first 5) \u2014 5\n  \u2713  catalog.alert_types (first 5) \u2014 5\n  \u2713  catalog.get \u2014 id=CISCO_DUO_USERNAME isAlert=False\n\n=== investigations (read-only) ===\n  \u2713  investigations.list (first 10) \u2014 10\n  \u2713  investigations.get \u2014 id=cc523d3e-0769-460c-b140-524ffa852c80 status=investigating severity=\n  \u2713  investigations.list filter=pending-review \u2014 265\n  \u2713  investigations.list filter=high-or-critical \u2014 80\n\n=== remediations (read-only) ===\n  \u2713  remediations.list (first 5) \u2014 5\n  \u2713  remediations.get \u2014 id=3e9ad0b0-bd4b-4eaa-bd0f-5065922938d1 status=success template=Enable Microsoft Entra User by User Principal Name\n\n=== investigation templates ===\n  \u2713  investigation_templates.list (first 5) \u2014 5\n  \u2713  investigation_templates.get \u2014 id=896d002b-0edf-4a2a-92f3-6b8dfe9c9277 name=Q - UPN to PWN\n\n=== remediation templates ===\n  \u2713  remediation_templates.list (first 5) \u2014 5\n  \u2717  remediation_templates.*: [404] not found (trace=8690f747a508481217fe3f9983105bd5)\n\n=== business context ===\n  \u2713  business_context.list (first 5) \u2014 5\n  \u2713  business_context.get \u2014 id=803247f1-cb0a-4062-96cd-d1de448c303f status=ready records=1\n\n=== error handling: 404 path ===\n  \u2713  404 mapped to typed error \u2014 ForbiddenError status=403\n\nFAIL: 1 unexpected failure(s)",
     "stderr_tail": "",
     "trace_ids": [
-      "4ee7f6294f3977dc49ecf5273a750da0"
+      "8690f747a508481217fe3f9983105bd5"
     ],
     "created_investigation_ids": [],
     "created_remediation_ids": []
@@ -239,7 +239,7 @@
       "templates"
     ],
     "exit_code": 0,
-    "duration_s": 0.652,
+    "duration_s": 0.519,
     "stdout_tail": "  r-1c0iglnc5occd6      subject=CROWDSTRIKE_DEVICE_ID                undo=yes  Isolate Host\n  r-3275me0c25i553      subject=MICROSOFT_ENTRA_OBJECT_ID            undo=yes  Enable User\n  r-371o3djc9ibhji      subject=CROWDSTRIKE_DEVICE_ID                undo=yes  Restore Host\n  r-39a26e0p32micg      subject=MICROSOFT_ENTRA_USER_PRINCIPAL_NAME  undo=yes  Disable User\n  r-3k4ii75j4aedhd      subject=MICROSOFT_ENTRA_OBJECT_ID            undo=yes  Disable User\n  r-6d0nn0e9ae0o87      subject=MICROSOFT_ENTRA_USER_PRINCIPAL_NAME  undo=no  Revoke Sessions\n  r-6g3bhhe9b4ihap      subject=MICROSOFT_ENTRA_OBJECT_ID            undo=no  Revoke Sessions\n  r-6k81klf1p0mgf3      subject=MICROSOFT_ENTRA_USER_PRINCIPAL_NAME  undo=yes  Enable User",
     "stderr_tail": "",
     "trace_ids": [],
@@ -254,7 +254,7 @@
       "user"
     ],
     "exit_code": 0,
-    "duration_s": 0.515,
+    "duration_s": 0.521,
     "stdout_tail": "  r-1c0iglnc5occd6      subject=CROWDSTRIKE_DEVICE_ID                undo=yes  Isolate Host\n  r-3275me0c25i553      subject=MICROSOFT_ENTRA_OBJECT_ID            undo=yes  Enable User\n  r-371o3djc9ibhji      subject=CROWDSTRIKE_DEVICE_ID                undo=yes  Restore Host\n  r-39a26e0p32micg      subject=MICROSOFT_ENTRA_USER_PRINCIPAL_NAME  undo=yes  Disable User\n  r-3k4ii75j4aedhd      subject=MICROSOFT_ENTRA_OBJECT_ID            undo=yes  Disable User\n  r-6d0nn0e9ae0o87      subject=MICROSOFT_ENTRA_USER_PRINCIPAL_NAME  undo=no  Revoke Sessions\n  r-6g3bhhe9b4ihap      subject=MICROSOFT_ENTRA_OBJECT_ID            undo=no  Revoke Sessions\n  r-6k81klf1p0mgf3      subject=MICROSOFT_ENTRA_USER_PRINCIPAL_NAME  undo=yes  Enable User",
     "stderr_tail": "",
     "trace_ids": [],
@@ -267,7 +267,7 @@
       "--list"
     ],
     "exit_code": 0,
-    "duration_s": 0.51,
+    "duration_s": 0.517,
     "stdout_tail": "  Q - UPN to PWN                  leads=[MICROSOFT_ENTRA_USER_PRINCIPAL_NAME]  Check if a UPN has been PWNed\n  DT_Test3Y!                      leads=[EMAIL_ADDRESS]  DT_Test3\n  Q - Multiple email leads        leads=[EMAIL_ADDRESS,EMAIL_ADDRESS]  Multiple email address investigation\n  filename and upn - tega         leads=[FILE_NAME,MICROSOFT_ENTRA_USER_PRINCIPAL_NAME]  \n  tega - large data               leads=[FILE_NAME]  \n  test again                      leads=[MICROSOFT_ENTRA_USER_PRINCIPAL_NAME]  \n  Users Last Day                  leads=[MICROSOFT_ENTRA_USER_PRINCIPAL_NAME]  \n  Tega's UPN template             leads=[MICROSOFT_ENTRA_USER_PRINCIPAL_NAME]  ",
     "stderr_tail": "",
     "trace_ids": [],
@@ -294,12 +294,12 @@
       "--demo"
     ],
     "exit_code": 0,
-    "duration_s": 0.886,
-    "stdout_tail": "Investigation cc523d3e-0769-460c-b140-524ffa852c80  action=created\nConsole: https://ui.cmdzero.io/#/inv-detail?id=cc523d3e-0769-460c-b140-524ffa852c80&org=51c264ff-5a98-4f15-b7e1-07158d35151c\n\n{\n  \"id\": \"cc523d3e-0769-460c-b140-524ffa852c80\",\n  \"action\": \"created\",\n  \"assignees\": [],\n  \"category\": \"\",\n  \"confidenceLevel\": \"\",\n  \"consoleUrl\": \"https://ui.cmdzero.io/#/inv-detail?id=cc523d3e-0769-460c-b140-524ffa852c80&org=51c264ff-5a98-4f15-b7e1-07158d35151c\",\n  \"createdBy\": {\n    \"type\": \"application\",\n    \"name\": \"Eric's api\",\n    \"id\": \"b1a4e2ee-78f0-4835-9787-f1e869a2664b\"\n  },\n  \"createdTime\": \"2026-04-28T21:47:09.899523Z\",\n  \"description\": \"\",\n  \"endTime\": \"0001-01-01T00:00:00Z\",\n  \"impact\": \"\",\n  \"investigationUrl\": \"https://api.cmdzero.io/public/v1/organizations/51c264ff-5a98-4f15-b7e1-07158d35151c/investigations/cc523d3e-0769-460c-b140-524ffa852c80\",\n  \"observables\": [],\n  \"organizationId\": \"51c264ff-5a98-4f15-b7e1-07158d35151c\",\n  \"sensitivity\": \"\",\n  \"severity\": \"\",\n  \"startTime\": \"0001-01-01T00:00:00Z\",\n  \"status\": \"investigating\",\n  \"summary\": \"\",\n  \"tags\": [\n    \"siem-integration\",\n    \"email-malware\"\n  ],\n  \"templateId\": \"\",\n  \"title\": \"Malicious attachment detected\",\n  \"type\": \"manual\",\n  \"updatedBy\": {\n    \"type\": \"application\",\n    \"name\": \"Eric's api\",\n    \"id\": \"b1a4e2ee-78f0-4835-9787-f1e869a2664b\"\n  },\n  \"updatedTime\": \"2026-04-28T21:47:09.899523Z\",\n  \"verdict\": []\n}",
+    "duration_s": 0.818,
+    "stdout_tail": "Investigation 8eeae216-eb86-4233-8a0f-018e670c7b38  action=created\nConsole: https://ui.cmdzero.io/#/inv-detail?id=8eeae216-eb86-4233-8a0f-018e670c7b38&org=51c264ff-5a98-4f15-b7e1-07158d35151c\n\n{\n  \"id\": \"8eeae216-eb86-4233-8a0f-018e670c7b38\",\n  \"action\": \"created\",\n  \"assignees\": [],\n  \"category\": \"\",\n  \"confidenceLevel\": \"\",\n  \"consoleUrl\": \"https://ui.cmdzero.io/#/inv-detail?id=8eeae216-eb86-4233-8a0f-018e670c7b38&org=51c264ff-5a98-4f15-b7e1-07158d35151c\",\n  \"createdBy\": {\n    \"type\": \"application\",\n    \"name\": \"Eric's api\",\n    \"id\": \"b1a4e2ee-78f0-4835-9787-f1e869a2664b\"\n  },\n  \"createdTime\": \"2026-04-28T21:47:50.114999Z\",\n  \"description\": \"\",\n  \"endTime\": \"0001-01-01T00:00:00Z\",\n  \"impact\": \"\",\n  \"investigationUrl\": \"https://api.cmdzero.io/public/v1/organizations/51c264ff-5a98-4f15-b7e1-07158d35151c/investigations/8eeae216-eb86-4233-8a0f-018e670c7b38\",\n  \"observables\": [],\n  \"organizationId\": \"51c264ff-5a98-4f15-b7e1-07158d35151c\",\n  \"sensitivity\": \"\",\n  \"severity\": \"\",\n  \"startTime\": \"0001-01-01T00:00:00Z\",\n  \"status\": \"investigating\",\n  \"summary\": \"\",\n  \"tags\": [\n    \"siem-integration\",\n    \"email-malware\"\n  ],\n  \"templateId\": \"\",\n  \"title\": \"Malicious attachment detected\",\n  \"type\": \"manual\",\n  \"updatedBy\": {\n    \"type\": \"application\",\n    \"name\": \"Eric's api\",\n    \"id\": \"b1a4e2ee-78f0-4835-9787-f1e869a2664b\"\n  },\n  \"updatedTime\": \"2026-04-28T21:47:50.114999Z\",\n  \"verdict\": []\n}",
     "stderr_tail": "",
     "trace_ids": [],
     "created_investigation_ids": [
-      "cc523d3e-0769-460c-b140-524ffa852c80"
+      "8eeae216-eb86-4233-8a0f-018e670c7b38"
     ],
     "created_remediation_ids": []
   },
