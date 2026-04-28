@@ -18,7 +18,7 @@ def test_organizations_list_calls_top_level_organizations(client, fixture, base_
     assert route.called
     assert route.calls[0].request.url.path == "/public/v1/organizations"
     assert all(isinstance(o, Organization) for o in orgs)
-    assert any(o.id == "51c264ff-5a98-4f15-b7e1-07158d35151c" for o in orgs)
+    assert any(str(o.id) == "51c264ff-5a98-4f15-b7e1-07158d35151c" for o in orgs)
 
 
 @respx.mock
