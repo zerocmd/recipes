@@ -59,6 +59,30 @@ READ_ONLY_INVOCATIONS: list[tuple[str, list[str]]] = [
     ("automated_remediation.py", ["templates", "--subject-type", "user"]),
 ]
 
+# Mutating: each invocation can create real investigations or remediations.
+# template_investigation.py --list lists templates without creating; the
+# create branch needs a template id which must be supplied via env var
+# CMDZERO_TEST_TEMPLATE_ID and a lead via CMDZERO_TEST_LEAD if specified.
+MUTATING_INVOCATIONS: list[tuple[str, list[str]]] = [
+    ("template_investigation.py", ["--list"]),
+    # Real create — only if the env vars are set; the runner fills them in.
+    ("template_investigation.py", ["--template", "${CMDZERO_TEST_TEMPLATE_ID}"]),
+    ("alert_investigation.py", ["--demo"]),
+    # automated_remediation.py contain requires an existing investigation id
+    # and a subject — supplied via env vars filled by the runner.
+    (
+        "automated_remediation.py",
+        [
+            "contain",
+            "${CMDZERO_TEST_INVESTIGATION_ID}",
+            "--subject",
+            "${CMDZERO_TEST_SUBJECT}",
+            "--template-name",
+            "${CMDZERO_TEST_REMEDIATION_TEMPLATE}",
+        ],
+    ),
+]
+
 
 @dataclass
 class RunResult:
@@ -93,8 +117,16 @@ def run_one(script: str, args: list[str], timeout: int = 60) -> RunResult:
 
     combined = stdout + "\n" + stderr
     trace_ids = sorted(set(re.findall(r"\b[a-f0-9]{32}\b", combined)))
-    inv_ids = sorted(set(re.findall(r"\binvestigation[_ -]?id[:= ]+([0-9a-f-]{36})", stdout, re.I)))
-    rem_ids = sorted(set(re.findall(r"\bremediation[_ -]?id[:= ]+([0-9a-f-]{36})", stdout, re.I)))
+    # Match either "investigation_id: <uuid>" prose form or
+    # ".../investigations/<uuid>" URL form (covers JSON-dumped responses).
+    inv_ids = sorted(set(
+        re.findall(r"\binvestigation[_ -]?id[:= ]+([0-9a-f-]{36})", stdout, re.I)
+        + re.findall(r"/investigations/([0-9a-f-]{36})", stdout)
+    ))
+    rem_ids = sorted(set(
+        re.findall(r"\bremediation[_ -]?id[:= ]+([0-9a-f-]{36})", stdout, re.I)
+        + re.findall(r"/remediations/([0-9a-f-]{36})", stdout)
+    ))
 
     return RunResult(
         script=script,
@@ -131,6 +163,34 @@ def write_reports(results: list[RunResult]) -> None:
     REPORT_MD.write_text("".join(lines))
 
 
+def _expand_env(args: list[str]) -> tuple[list[str], str | None]:
+    """Replace ${ENV_VAR} placeholders in args. If any placeholder is
+    unset, return (args, reason_to_skip)."""
+    expanded: list[str] = []
+    for a in args:
+        m = re.fullmatch(r"\$\{([A-Z_][A-Z0-9_]*)\}", a)
+        if m:
+            val = os.environ.get(m.group(1))
+            if not val:
+                return args, f"env var {m.group(1)} not set"
+            expanded.append(val)
+        else:
+            expanded.append(a)
+    return expanded, None
+
+
+def _read_phase_aborts_mutate(results: list[RunResult]) -> bool:
+    """If too many read-only runs failed with an auth-shaped error, abort
+    before running mutations."""
+    auth_failures = [
+        r for r in results
+        if r.script in READ_ONLY_SCRIPTS
+        and r.exit_code != 0
+        and ("403" in r.stderr_tail or "401" in r.stderr_tail or "unauthorized" in r.stderr_tail.lower())
+    ]
+    return len(auth_failures) >= 3
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -152,6 +212,31 @@ def main() -> int:
     if args.phase in ("read", "mutate", "all"):
         for script, run_args in READ_ONLY_INVOCATIONS:
             results.append(run_one(script, run_args, timeout=60))
+
+    # Phase: mutate
+    if args.phase in ("mutate", "all"):
+        if _read_phase_aborts_mutate(results):
+            print(
+                "ABORT: too many auth failures in read-only phase — "
+                "skipping mutating runs.",
+                file=sys.stderr,
+            )
+        else:
+            for script, run_args in MUTATING_INVOCATIONS:
+                expanded, skip_reason = _expand_env(run_args)
+                if skip_reason:
+                    results.append(
+                        RunResult(
+                            script=script,
+                            args=run_args,
+                            exit_code=-2,
+                            duration_s=0.0,
+                            stdout_tail="",
+                            stderr_tail=f"[skipped: {skip_reason}]",
+                        )
+                    )
+                    continue
+                results.append(run_one(script, expanded, timeout=120))
 
     write_reports(results)
     print(f"Wrote {REPORT_JSON} and {REPORT_MD}")
