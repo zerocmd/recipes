@@ -16,7 +16,7 @@ import (
 // ListRemediationsParams defines the parameters for listing remediations.
 type ListRemediationsParams struct {
 	Filter string `json:"filter,omitempty" jsonschema:"description=OData filter expression to narrow results (e.g. status eq 'success'\\, contains(templateName\\, 'Disable'))"`
-	Limit  int    `json:"limit,omitempty" jsonschema:"description=Maximum number of items to return (default 100\\, min 1\\, max 100)"`
+	Limit  int    `json:"limit,omitempty" jsonschema:"description=Maximum number of items to return (default 10000\\, min 1\\, max 10000)"`
 	Next   string `json:"next,omitempty" jsonschema:"description=Pagination cursor from a previous response"`
 }
 
@@ -54,6 +54,46 @@ var ListRemediations = mcpcmdzero.MustTool(
 	mcp.WithReadOnlyHintAnnotation(true),
 )
 
+// QueryRemediationsParams defines the parameters for querying remediations via HTTP QUERY.
+type QueryRemediationsParams struct {
+	Filter string `json:"filter,omitempty" jsonschema:"description=OData filter expression"`
+	Limit  int    `json:"limit,omitempty" jsonschema:"description=Maximum number of items to return (default 10000\\, min 1\\, max 10000)"`
+	Next   string `json:"next,omitempty" jsonschema:"description=Pagination cursor from a previous response"`
+}
+
+func queryRemediations(ctx context.Context, args QueryRemediationsParams) (json.RawMessage, error) {
+	c := mcpcmdzero.CmdZeroClientFromContext(ctx)
+	if c == nil {
+		return nil, fmt.Errorf("cmdzero client not configured")
+	}
+
+	payload := make(map[string]any)
+	if args.Filter != "" {
+		payload["filter"] = args.Filter
+	}
+	if args.Limit > 0 {
+		payload["limit"] = args.Limit
+	}
+	if args.Next != "" {
+		payload["next"] = args.Next
+	}
+
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return nil, fmt.Errorf("marshal request: %w", err)
+	}
+
+	return c.Query(ctx, "/remediations", bytes.NewReader(body))
+}
+
+var QueryRemediations = mcpcmdzero.MustTool(
+	"query_remediations",
+	"Query remediations via HTTP QUERY (POST-shaped request body) for filters too long to fit in a URL. Same fields and pagination semantics as list_remediations.",
+	queryRemediations,
+	mcp.WithTitleAnnotation("Query remediations"),
+	mcp.WithReadOnlyHintAnnotation(true),
+)
+
 // RemediationSubject represents the entity to remediate.
 type RemediationSubject struct {
 	Type  string `json:"type" jsonschema:"required,description=Subject type (must match the template's subjectType\\, e.g. MICROSOFT_ENTRA_USER_PRINCIPAL_NAME\\, AWS_IAM_USER)"`
@@ -62,9 +102,9 @@ type RemediationSubject struct {
 
 // CreateRemediationParams defines the parameters for creating a remediation.
 type CreateRemediationParams struct {
-	TemplateID    string              `json:"templateId" jsonschema:"required,description=Remediation template ID defining the action to execute"`
-	Subject       RemediationSubject  `json:"subject" jsonschema:"required,description=The entity to remediate (type must match template's subjectType)"`
-	Justification string             `json:"justification" jsonschema:"required,description=Reason for executing this remediation action"`
+	TemplateID    string             `json:"templateId" jsonschema:"required,description=Remediation template ID defining the action to execute"`
+	Subject       RemediationSubject `json:"subject" jsonschema:"required,description=The entity to remediate (type must match template's subjectType)"`
+	Justification string             `json:"justification,omitempty" jsonschema:"description=Reason for executing this remediation action (optional but recommended for audit trail)"`
 	Postback      *PostbackConfig    `json:"postback,omitempty" jsonschema:"description=Postback URL configuration to receive notification when remediation completes"`
 }
 
@@ -75,9 +115,11 @@ func createRemediation(ctx context.Context, args CreateRemediationParams) (json.
 	}
 
 	payload := map[string]any{
-		"templateId":    args.TemplateID,
-		"subject":       args.Subject,
-		"justification": args.Justification,
+		"templateId": args.TemplateID,
+		"subject":    args.Subject,
+	}
+	if args.Justification != "" {
+		payload["justification"] = args.Justification
 	}
 	if args.Postback != nil {
 		payload["postback"] = args.Postback
@@ -125,6 +167,7 @@ var GetRemediation = mcpcmdzero.MustTool(
 func AddRemediationTools(s *server.MCPServer) {
 	AddRemediationTemplateTools(s)
 	ListRemediations.Register(s)
+	QueryRemediations.Register(s)
 	CreateRemediation.Register(s)
 	GetRemediation.Register(s)
 }

@@ -172,6 +172,13 @@ func (c *CmdZeroClient) GetGlobal(ctx context.Context, path string) (json.RawMes
 	return c.do(ctx, http.MethodGet, c.baseURL+path, nil)
 }
 
+// QueryGlobal performs an HTTP QUERY request to a non-org-scoped path
+// (e.g. /organizations). Used for complex filter expressions too long to
+// fit in a URL.
+func (c *CmdZeroClient) QueryGlobal(ctx context.Context, path string, body io.Reader) (json.RawMessage, error) {
+	return c.do(ctx, "QUERY", c.baseURL+path, body)
+}
+
 // Version returns the version of the cmdzero-public-api-mcp binary.
 var Version = sync.OnceValue(func() string {
 	v := "(devel)"

@@ -16,7 +16,7 @@ import (
 // ListBusinessContextUploadsParams defines the parameters for listing business context uploads.
 type ListBusinessContextUploadsParams struct {
 	Filter string `json:"filter,omitempty" jsonschema:"description=OData filter expression to narrow results (e.g. status eq 'active'\\, contains(name\\, 'VIP'))"`
-	Limit  int    `json:"limit,omitempty" jsonschema:"description=Maximum number of items to return (default 100\\, min 1\\, max 100)"`
+	Limit  int    `json:"limit,omitempty" jsonschema:"description=Maximum number of items to return (default 10000\\, min 1\\, max 10000)"`
 	Next   string `json:"next,omitempty" jsonschema:"description=Pagination cursor from a previous response"`
 }
 
@@ -54,10 +54,23 @@ var ListBusinessContextUploads = mcpcmdzero.MustTool(
 	mcp.WithReadOnlyHintAnnotation(true),
 )
 
+// Note: the API returns 405 Method Not Allowed for QUERY on
+// /business-context/uploads, so no query_business_context_uploads tool
+// is exposed. Use list_business_context_uploads instead.
+
+// SchemaAnnotation maps a field path in records to a catalog subject type
+// (e.g. EMAIL_ADDRESS, MICROSOFT_ENTRA_USER_PRINCIPAL_NAME). Required by
+// the API on business-context uploads.
+type SchemaAnnotation struct {
+	Path string `json:"path" jsonschema:"required,description=Dot-notation path to the field in each record (e.g. email\\, host.id)"`
+	Type string `json:"type" jsonschema:"required,description=Catalog subject type for this field (e.g. EMAIL_ADDRESS\\, MICROSOFT_ENTRA_USER_PRINCIPAL_NAME\\, IP_ADDRESS\\, HOSTNAME\\, SHA256)"`
+}
+
 // UploadBusinessContextParams defines the parameters for uploading business context.
 type UploadBusinessContextParams struct {
-	Name    string         `json:"name" jsonschema:"required,description=Name for this business context upload"`
-	Records []map[string]any `json:"records" jsonschema:"required,description=Array of context records to upload. Each record is a JSON object with subject-specific fields."`
+	Name    string             `json:"name" jsonschema:"required,description=Name for this business context upload"`
+	Records []map[string]any   `json:"records" jsonschema:"required,description=Array of context records to upload. Each record is a JSON object with subject-specific fields."`
+	Schema  []SchemaAnnotation `json:"schema" jsonschema:"required,description=Schema annotations mapping each meaningful field in records to a catalog subject type. Required by the API."`
 }
 
 func uploadBusinessContext(ctx context.Context, args UploadBusinessContextParams) (json.RawMessage, error) {
@@ -106,9 +119,10 @@ var GetBusinessContextUpload = mcpcmdzero.MustTool(
 
 // ReplaceBusinessContextUploadParams defines the parameters for replacing a business context upload.
 type ReplaceBusinessContextUploadParams struct {
-	UploadID string           `json:"uploadId" jsonschema:"required,description=The unique identifier of the business context upload to replace (UUID)"`
-	Name     string           `json:"name" jsonschema:"required,description=Name for this business context upload"`
-	Records  []map[string]any `json:"records" jsonschema:"required,description=Array of context records to replace with. Completely replaces the existing records."`
+	UploadID string             `json:"uploadId" jsonschema:"required,description=The unique identifier of the business context upload to replace (UUID)"`
+	Name     string             `json:"name" jsonschema:"required,description=Name for this business context upload"`
+	Records  []map[string]any   `json:"records" jsonschema:"required,description=Array of context records to replace with. Completely replaces the existing records."`
+	Schema   []SchemaAnnotation `json:"schema" jsonschema:"required,description=Schema annotations mapping each meaningful field in records to a catalog subject type. Required by the API."`
 }
 
 func replaceBusinessContextUpload(ctx context.Context, args ReplaceBusinessContextUploadParams) (json.RawMessage, error) {
@@ -120,6 +134,7 @@ func replaceBusinessContextUpload(ctx context.Context, args ReplaceBusinessConte
 	payload := map[string]any{
 		"name":    args.Name,
 		"records": args.Records,
+		"schema":  args.Schema,
 	}
 
 	body, err := json.Marshal(payload)
