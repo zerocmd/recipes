@@ -249,7 +249,7 @@ class InvestigationTemplate(_Base):
     scenario: str | None = None
     sensitivity: str | None = None
     severity: str | None = None
-    sliding_date: str | None = None
+    sliding_date: int | None = None
     lead_types: list[str] = Field(default_factory=list)
     assignees: list[UserReference] = Field(default_factory=list)
     tags: list[str] = Field(default_factory=list)
