@@ -42,6 +42,23 @@ MUTATING_SCRIPTS = [
 ]
 ALL_SCRIPTS = READ_ONLY_SCRIPTS + MUTATING_SCRIPTS
 
+# Each entry: (script, args). One entry per discoverable read-only invocation.
+# Subcommands (where present) are exercised explicitly here rather than auto-
+# discovered, because each subcommand has different required arguments.
+READ_ONLY_INVOCATIONS: list[tuple[str, list[str]]] = [
+    ("health_check.py", []),
+    ("business_context.py", ["list"]),
+    ("investigation_pipeline_report.py", ["pending-review"]),
+    ("investigation_pipeline_report.py", ["pending-review", "--severity", "high"]),
+    ("investigation_pipeline_report.py", ["sla"]),
+    ("mssp_multi_tenant.py", ["summary"]),
+    ("mssp_multi_tenant.py", ["assignable-users"]),
+    ("sdk_live_test.py", []),
+    # automated_remediation has a read-only `templates` subcommand
+    ("automated_remediation.py", ["templates"]),
+    ("automated_remediation.py", ["templates", "--subject-type", "user"]),
+]
+
 
 @dataclass
 class RunResult:
@@ -127,9 +144,14 @@ def main() -> int:
     results: list[RunResult] = []
 
     # Phase: --help
-    if args.phase in ("help", "all"):
+    if args.phase in ("help", "read", "mutate", "all"):
         for script in ALL_SCRIPTS:
             results.append(run_one(script, ["--help"], timeout=15))
+
+    # Phase: read-only
+    if args.phase in ("read", "mutate", "all"):
+        for script, run_args in READ_ONLY_INVOCATIONS:
+            results.append(run_one(script, run_args, timeout=60))
 
     write_reports(results)
     print(f"Wrote {REPORT_JSON} and {REPORT_MD}")
