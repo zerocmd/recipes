@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cmdzero"
+version = "0.1.0"
+description = "Python SDK for the Command Zero Public API"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Proprietary" }
+authors = [{ name = "Command Zero" }]
+dependencies = [
+    "httpx>=0.27",
+    "pydantic>=2.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7",
+    "pytest-httpx>=0.30",
+    "respx>=0.21",
+]
+examples = [
+    "flask>=3.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["cmdzero*"]
+
+[tool.setuptools.package-data]
+cmdzero = ["py.typed"]
