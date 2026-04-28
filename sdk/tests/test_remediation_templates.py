@@ -26,16 +26,27 @@ def test_remediation_templates_list(client, fixture, base_url, org_id):
 
 
 @respx.mock
-def test_remediation_templates_get(client, fixture, base_url, org_id):
+def test_remediation_templates_get_scans_list_client_side(client, fixture, base_url, org_id):
+    """The API has no GET-by-id endpoint for remediation templates; the SDK
+    paginates the list and matches client-side. Verify get() does NOT call
+    /remediation-templates/{id} (which would 404) and DOES hit the list path."""
     sample = fixture("remediation_templates_list")["remediationTemplates"][0]
     template_id = sample["id"]
-    route = respx.get(
+
+    list_route = respx.get(
+        f"{base_url}/organizations/{org_id}/{CORRECT_PATH}"
+    ).mock(return_value=httpx.Response(200, json=fixture("remediation_templates_list")))
+    by_id_route = respx.get(
         f"{base_url}/organizations/{org_id}/{CORRECT_PATH}/{template_id}"
-    ).mock(return_value=httpx.Response(200, json=sample))
+    )
 
     result = client.remediation_templates.get(template_id)
-    assert route.called
+
+    assert list_route.called, "get() should fall through to a list scan"
+    assert not by_id_route.called, \
+        "get() must NOT hit /remediation-templates/{id} (no such API endpoint)"
     assert isinstance(result, RemediationTemplate)
+    assert result.id == template_id
 
 
 @respx.mock
