@@ -1,0 +1,132 @@
+[
+  {
+    "script": "health_check.py",
+    "args": [
+      "--help"
+    ],
+    "exit_code": 0,
+    "duration_s": 0.199,
+    "stdout_tail": "usage: health_check.py [-h]\n\nIntegration health check.\n\noptions:\n  -h, --help  show this help message and exit",
+    "stderr_tail": "",
+    "trace_ids": [],
+    "created_investigation_ids": [],
+    "created_remediation_ids": []
+  },
+  {
+    "script": "cmdzero_client.py",
+    "args": [
+      "--help"
+    ],
+    "exit_code": 0,
+    "duration_s": 0.189,
+    "stdout_tail": "",
+    "stderr_tail": "",
+    "trace_ids": [],
+    "created_investigation_ids": [],
+    "created_remediation_ids": []
+  },
+  {
+    "script": "business_context.py",
+    "args": [
+      "--help"
+    ],
+    "exit_code": 0,
+    "duration_s": 0.196,
+    "stdout_tail": "usage: business_context.py [-h]\n                           {list,upload-hr,upload-cmdb,replace,delete} ...\n\nUse case 3: business context uploads (HR / CMDB).\n\npositional arguments:\n  {list,upload-hr,upload-cmdb,replace,delete}\n\noptions:\n  -h, --help            show this help message and exit",
+    "stderr_tail": "",
+    "trace_ids": [],
+    "created_investigation_ids": [],
+    "created_remediation_ids": []
+  },
+  {
+    "script": "investigation_pipeline_report.py",
+    "args": [
+      "--help"
+    ],
+    "exit_code": 0,
+    "duration_s": 0.212,
+    "stdout_tail": "usage: investigation_pipeline_report.py [-h]\n                                        {pending-review,by-application,by-tag,sla,custom} ...\n\nUse case 5: investigation pipeline visibility and SLA tracking.\n\npositional arguments:\n  {pending-review,by-application,by-tag,sla,custom}\n    pending-review      High-severity investigations awaiting analyst review.\n    by-application      Investigations created by a specific integration.\n    by-tag              Investigations carrying a tag.\n    sla                 Latency report from\n                        createdTime/completedTime/closedTime.\n    custom              Run a free-form OData filter.\n\noptions:\n  -h, --help            show this help message and exit",
+    "stderr_tail": "",
+    "trace_ids": [],
+    "created_investigation_ids": [],
+    "created_remediation_ids": []
+  },
+  {
+    "script": "mssp_multi_tenant.py",
+    "args": [
+      "--help"
+    ],
+    "exit_code": 0,
+    "duration_s": 0.192,
+    "stdout_tail": "usage: mssp_multi_tenant.py [-h] [--filter-org FILTER_ORG]\n                            {summary,assignable-users} ...\n\nUse case 6: MSSP / multi-tenant operations.\n\npositional arguments:\n  {summary,assignable-users}\n\noptions:\n  -h, --help            show this help message and exit\n  --filter-org FILTER_ORG\n                        OData filter applied to the org list, e.g. \"role eq\n                        'responder'\"",
+    "stderr_tail": "",
+    "trace_ids": [],
+    "created_investigation_ids": [],
+    "created_remediation_ids": []
+  },
+  {
+    "script": "sdk_live_test.py",
+    "args": [
+      "--help"
+    ],
+    "exit_code": 0,
+    "duration_s": 0.043,
+    "stdout_tail": "usage: sdk_live_test.py [-h]\n\nSmoke-test the SDK against the live Command Zero API.\n\noptions:\n  -h, --help  show this help message and exit",
+    "stderr_tail": "",
+    "trace_ids": [],
+    "created_investigation_ids": [],
+    "created_remediation_ids": []
+  },
+  {
+    "script": "template_investigation.py",
+    "args": [
+      "--help"
+    ],
+    "exit_code": 0,
+    "duration_s": 0.172,
+    "stdout_tail": "usage: template_investigation.py [-h] [--list] [--template TEMPLATE]\n                                 [--lead LEAD] [--title TITLE] [--tag TAGS]\n                                 [--start START_TIME] [--end END_TIME]\n                                 [--postback-url POSTBACK_URL]\n                                 [--postback-token POSTBACK_TOKEN]\n\nUse case 2: template-based investigation for recurring workflows.\n\noptions:\n  -h, --help            show this help message and exit\n  --list                List available templates and exit.\n  --template TEMPLATE   Template id or slug name (e.g. users-last-day).\n  --lead LEAD           Repeatable. Format TYPE:value, e.g.\n                        EMAIL_ADDRESS:user@x.com\n  --title TITLE\n  --tag TAGS\n  --start START_TIME    ISO-8601 startTime\n  --end END_TIME        ISO-8601 endTime\n  --postback-url POSTBACK_URL\n  --postback-token POSTBACK_TOKEN",
+    "stderr_tail": "",
+    "trace_ids": [],
+    "created_investigation_ids": [],
+    "created_remediation_ids": []
+  },
+  {
+    "script": "alert_investigation.py",
+    "args": [
+      "--help"
+    ],
+    "exit_code": 0,
+    "duration_s": 0.185,
+    "stdout_tail": "usage: alert_investigation.py [-h] [--demo] [--alert-type ALERT_TYPE]\n                              [--alert-data ALERT_DATA]\n                              [--alert-schema ALERT_SCHEMA] [--title TITLE]\n                              [--tag TAGS] [--postback-url POSTBACK_URL]\n                              [--postback-token POSTBACK_TOKEN]\n\nUse case 1: alert-triggered investigation from a SIEM/SOAR.\n\noptions:\n  -h, --help            show this help message and exit\n  --demo                Submit the bundled email-malware example payload.\n  --alert-type ALERT_TYPE\n                        Built-in or custom alert type name (e.g.\n                        EmailMalware).\n  --alert-data ALERT_DATA\n                        Path to a JSON file holding alertData. Use '-' for\n                        stdin.\n  --alert-schema ALERT_SCHEMA\n                        Path to a JSON file holding alertSchema (list of\n                        {path,type}).\n  --title TITLE\n  --tag TAGS\n  --postback-url POSTBACK_URL\n  --postback-token POSTBACK_TOKEN",
+    "stderr_tail": "",
+    "trace_ids": [],
+    "created_investigation_ids": [],
+    "created_remediation_ids": []
+  },
+  {
+    "script": "automated_remediation.py",
+    "args": [
+      "--help"
+    ],
+    "exit_code": 0,
+    "duration_s": 0.225,
+    "stdout_tail": "usage: automated_remediation.py [-h] {contain,undo,templates} ...\n\nUse case 4: automated remediation after investigation completes.\n\npositional arguments:\n  {contain,undo,templates}\n    contain             Evaluate verdict and execute a remediation if\n                        threshold met.\n    undo                Reverse a previously executed remediation.\n    templates           List remediation templates, optionally filtered by\n                        subject type.\n\noptions:\n  -h, --help            show this help message and exit",
+    "stderr_tail": "",
+    "trace_ids": [],
+    "created_investigation_ids": [],
+    "created_remediation_ids": []
+  },
+  {
+    "script": "postback_receiver.py",
+    "args": [
+      "--help"
+    ],
+    "exit_code": 0,
+    "duration_s": 0.187,
+    "stdout_tail": "usage: postback_receiver.py [-h] [--host HOST] [--port PORT]\n                            [--auto-remediate]\n\nCompanion to use cases 1 and 4: receive Command Zero postbacks.\n\noptions:\n  -h, --help        show this help message and exit\n  --host HOST\n  --port PORT\n  --auto-remediate  Trigger remediation when verdict is malicious and\n                    confidence high.",
+    "stderr_tail": "",
+    "trace_ids": [],
+    "created_investigation_ids": [],
+    "created_remediation_ids": []
+  }
+]
