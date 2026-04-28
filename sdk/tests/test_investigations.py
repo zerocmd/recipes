@@ -14,6 +14,7 @@ from cmdzero import (
     CreateInvestigationRequest,
     CreateInvestigationResponse,
     Investigation,
+    InvestigationSummary,
 )
 
 PATH = "investigations"
@@ -37,15 +38,32 @@ def _create_response(**overrides):
 
 
 @respx.mock
-def test_investigations_list(client, fixture, base_url, org_id):
+def test_investigations_list_returns_summary_models(client, fixture, base_url, org_id):
+    """list() returns InvestigationSummary (the lighter schema the API
+    returns on list), NOT the full Investigation."""
     route = respx.get(f"{base_url}/organizations/{org_id}/{PATH}").mock(
         return_value=httpx.Response(200, json=fixture("investigations_list"))
     )
 
-    list(client.investigations.list())
+    items = list(client.investigations.list())
     assert route.called
     assert route.calls[0].request.url.path == \
         f"/public/v1/organizations/{org_id}/{PATH}"
+    assert all(isinstance(i, InvestigationSummary) for i in items)
+
+
+@respx.mock
+def test_investigations_list_query_method_uses_QUERY_verb(client, fixture, base_url, org_id):
+    """method='QUERY' on list() routes the request via HTTP QUERY (POST-like
+    body) for filters that exceed safe URL length."""
+    route = respx.route(method="QUERY", url=f"{base_url}/organizations/{org_id}/{PATH}").mock(
+        return_value=httpx.Response(200, json=fixture("investigations_list"))
+    )
+
+    list(client.investigations.list(method="QUERY", filter="status eq 'in-progress'"))
+
+    assert route.called
+    assert route.calls[0].request.method == "QUERY"
 
 
 @respx.mock

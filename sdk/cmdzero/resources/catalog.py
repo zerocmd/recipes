@@ -24,6 +24,7 @@ class CatalogResource(BaseResource):
         *,
         filter: str | None = None,
         limit: int | None = None,
+        method: str = "GET",
         organization_id: str | UUID | None = None,
     ) -> PaginatedIterator[CatalogType]:
         return self._paginate(
@@ -32,6 +33,7 @@ class CatalogResource(BaseResource):
             "types",
             filter=filter,
             limit=limit,
+            method=method,
         )
 
     def alert_types(self, *, organization_id: str | UUID | None = None) -> PaginatedIterator[CatalogType]:

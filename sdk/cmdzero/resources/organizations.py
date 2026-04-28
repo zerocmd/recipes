@@ -14,5 +14,14 @@ class OrganizationsResource(BaseResource):
 
     PATH = "/organizations"
 
-    def list(self, *, filter: str | None = None, limit: int | None = None) -> PaginatedIterator[Organization]:
-        return self._paginate(self.PATH, Organization, "organizations", filter=filter, limit=limit)
+    def list(
+        self,
+        *,
+        filter: str | None = None,
+        limit: int | None = None,
+        method: str = "GET",
+    ) -> PaginatedIterator[Organization]:
+        return self._paginate(
+            self.PATH, Organization, "organizations",
+            filter=filter, limit=limit, method=method,
+        )

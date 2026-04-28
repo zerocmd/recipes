@@ -19,13 +19,14 @@ class BusinessContextResource(BaseResource):
     """
 
     def _path(self, organization_id: str | UUID | None, suffix: str = "") -> str:
-        return f"/organizations/{self._org(organization_id)}/context/uploads{suffix}"
+        return f"/organizations/{self._org(organization_id)}/business-context/uploads{suffix}"
 
     def list(
         self,
         *,
         filter: str | None = None,
         limit: int | None = None,
+        method: str = "GET",
         organization_id: str | UUID | None = None,
     ) -> PaginatedIterator[BusinessContextUpload]:
         return self._paginate(
@@ -34,6 +35,7 @@ class BusinessContextResource(BaseResource):
             "uploads",
             filter=filter,
             limit=limit,
+            method=method,
         )
 
     def get(self, upload_id: str, *, organization_id: str | UUID | None = None) -> BusinessContextUpload:

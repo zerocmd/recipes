@@ -16,6 +16,7 @@ class ApplicationsResource(BaseResource):
         *,
         filter: str | None = None,
         limit: int | None = None,
+        method: str = "GET",
         organization_id: str | UUID | None = None,
     ) -> PaginatedIterator[Application]:
         return self._paginate(
@@ -24,6 +25,7 @@ class ApplicationsResource(BaseResource):
             "applications",
             filter=filter,
             limit=limit,
+            method=method,
         )
 
     def get(self, application_id: str | UUID, *, organization_id: str | UUID | None = None) -> Application:

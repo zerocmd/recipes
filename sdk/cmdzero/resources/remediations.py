@@ -22,6 +22,7 @@ class RemediationsResource(BaseResource):
         *,
         filter: str | None = None,
         limit: int | None = None,
+        method: str = "GET",
         organization_id: str | UUID | None = None,
     ) -> PaginatedIterator[Remediation]:
         return self._paginate(
@@ -30,6 +31,7 @@ class RemediationsResource(BaseResource):
             "remediations",
             filter=filter,
             limit=limit,
+            method=method,
         )
 
     def get(self, remediation_id: str | UUID, *, organization_id: str | UUID | None = None) -> Remediation:

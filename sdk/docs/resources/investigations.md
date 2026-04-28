@@ -17,9 +17,15 @@ the org, and update metadata (status, assignees, tags, severity).
 
 ## Returns
 
-`Investigation` (or `CreateInvestigationResponse` from POST, which
-extends `Investigation` with an `action` field). The most useful
-fields:
+`get`/`create` return an `Investigation` (or `CreateInvestigationResponse`
+from POST, which extends `Investigation` with an `action` field).
+
+`list` returns `InvestigationSummary` — a lighter shape that omits
+`description`, `summary`, `observables`, `alerts`, `start_time`/`end_time`,
+`confidence_level`, and `impact`. Call `cz.investigations.get(id)` to fetch
+the full Investigation when you need those fields.
+
+The most useful Investigation fields:
 
 | Field | Type | Notes |
 |---|---|---|
@@ -44,6 +50,7 @@ fields:
 | `created_time` / `completed_time` / `closed_time` | `datetime \| None` | SLA timestamps |
 | `created_by` / `updated_by` | `Attribution` | |
 | `console_url` | `str \| None` | Direct link into the Command Zero UI |
+| `investigation_url` | `str \| None` | Public-API URL for this investigation (the `/organizations/{org}/investigations/{id}` resource) |
 | `alerts` | `list[InvestigationAlertEntry] \| None` | Set when `type='alert'` |
 
 `CreateInvestigationResponse` adds:
