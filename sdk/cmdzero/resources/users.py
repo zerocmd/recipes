@@ -16,6 +16,7 @@ class UsersResource(BaseResource):
         *,
         filter: str | None = None,
         limit: int | None = None,
+        method: str = "GET",
         organization_id: str | UUID | None = None,
     ) -> PaginatedIterator[User]:
         return self._paginate(
@@ -24,6 +25,7 @@ class UsersResource(BaseResource):
             "users",
             filter=filter,
             limit=limit,
+            method=method,
         )
 
     def get(self, user_id: str | UUID, *, organization_id: str | UUID | None = None) -> User:

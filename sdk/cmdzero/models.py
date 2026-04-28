@@ -249,7 +249,7 @@ class InvestigationTemplate(_Base):
     scenario: str | None = None
     sensitivity: str | None = None
     severity: str | None = None
-    sliding_date: str | None = None
+    sliding_date: int | None = None
     lead_types: list[str] = Field(default_factory=list)
     assignees: list[UserReference] = Field(default_factory=list)
     tags: list[str] = Field(default_factory=list)
@@ -360,8 +360,36 @@ class CreateInvestigationResponse(Investigation):
     action: CreateInvestigationAction
 
 
+class InvestigationSummary(_Base):
+    """Lighter shape returned by GET /investigations (the list endpoint).
+
+    Compared to Investigation, the summary omits description, summary,
+    observables, alerts, start_time/end_time, confidence_level, and impact.
+    Use ``cz.investigations.get(id)`` to fetch the full Investigation.
+    """
+    id: UUID
+    organization_id: UUID
+    title: str
+    type: str | None = None
+    status: str
+    severity: str | None = None
+    sensitivity: str | None = None
+    category: str | None = None
+    created_by: Attribution
+    created_time: datetime
+    updated_by: Attribution
+    updated_time: datetime
+    completed_time: datetime | None = None
+    closed_time: datetime | None = None
+    console_url: str | None = None
+    tags: list[str] = Field(default_factory=list)
+    verdict: list[str] = Field(default_factory=list)
+    assignees: list[UserReference] = Field(default_factory=list)
+    template_id: str | None = None
+
+
 class ListInvestigationsResponse(_ListEnvelope):
-    investigations: list[Investigation] = Field(default_factory=list)
+    investigations: list[InvestigationSummary] = Field(default_factory=list)
 
 
 class InvestigationPostbackPayload(_Base):

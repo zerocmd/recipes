@@ -9,13 +9,14 @@ from .base import BaseResource
 
 class InvestigationTemplatesResource(BaseResource):
     def _path(self, organization_id: str | UUID | None, suffix: str = "") -> str:
-        return f"/organizations/{self._org(organization_id)}/investigations/templates{suffix}"
+        return f"/organizations/{self._org(organization_id)}/investigation-templates{suffix}"
 
     def list(
         self,
         *,
         filter: str | None = None,
         limit: int | None = None,
+        method: str = "GET",
         organization_id: str | UUID | None = None,
     ) -> PaginatedIterator[InvestigationTemplate]:
         return self._paginate(
@@ -24,6 +25,7 @@ class InvestigationTemplatesResource(BaseResource):
             "investigationTemplates",
             filter=filter,
             limit=limit,
+            method=method,
         )
 
     def get(self, template_id: str, *, organization_id: str | UUID | None = None) -> InvestigationTemplate:

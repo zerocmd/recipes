@@ -9,13 +9,14 @@ from .base import BaseResource
 
 class RemediationTemplatesResource(BaseResource):
     def _path(self, organization_id: str | UUID | None, suffix: str = "") -> str:
-        return f"/organizations/{self._org(organization_id)}/remediations/templates{suffix}"
+        return f"/organizations/{self._org(organization_id)}/remediation-templates{suffix}"
 
     def list(
         self,
         *,
         filter: str | None = None,
         limit: int | None = None,
+        method: str = "GET",
         organization_id: str | UUID | None = None,
     ) -> PaginatedIterator[RemediationTemplate]:
         return self._paginate(
@@ -24,11 +25,23 @@ class RemediationTemplatesResource(BaseResource):
             "remediationTemplates",
             filter=filter,
             limit=limit,
+            method=method,
         )
 
     def get(self, template_id: str, *, organization_id: str | UUID | None = None) -> RemediationTemplate:
-        data = self._request("GET", self._path(organization_id, f"/{template_id}"))
-        return RemediationTemplate.model_validate(data)
+        """Fetch a single remediation template by id.
+
+        The public API does not expose a GET-by-id endpoint for remediation
+        templates (it returns 404), and server-side filtering is not honored
+        on this endpoint either. As a workaround we paginate the list and
+        match client-side. This is fine in practice — the catalog of
+        remediation templates is small.
+        """
+        for tmpl in self.list(organization_id=organization_id):
+            if tmpl.id == template_id:
+                return tmpl
+        from ..exceptions import NotFoundError
+        raise NotFoundError(404, f"remediation template not found: {template_id}")
 
     def for_subject_type(
         self,

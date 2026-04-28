@@ -16,7 +16,7 @@ import (
 // ListInvestigationsParams defines the parameters for listing investigations.
 type ListInvestigationsParams struct {
 	Filter string `json:"filter,omitempty" jsonschema:"description=OData filter expression (e.g. status eq 'completed'\\, severity eq 'critical'\\, contains(title\\, 'phishing'))"`
-	Limit  int    `json:"limit,omitempty" jsonschema:"description=Maximum number of items to return (default 100\\, min 1\\, max 100)"`
+	Limit  int    `json:"limit,omitempty" jsonschema:"description=Maximum number of items to return (default 10000\\, min 1\\, max 10000)"`
 	Next   string `json:"next,omitempty" jsonschema:"description=Pagination cursor from a previous response"`
 }
 
@@ -57,7 +57,7 @@ var ListInvestigations = mcpcmdzero.MustTool(
 // QueryInvestigationsParams defines the parameters for querying investigations with complex filters.
 type QueryInvestigationsParams struct {
 	Filter string `json:"filter,omitempty" jsonschema:"description=OData filter expression (e.g. status eq 'completed' and severity eq 'critical')"`
-	Limit  int    `json:"limit,omitempty" jsonschema:"description=Maximum number of items to return (default 100\\, min 1\\, max 100)"`
+	Limit  int    `json:"limit,omitempty" jsonschema:"description=Maximum number of items to return (default 10000\\, min 1\\, max 10000)"`
 	Next   string `json:"next,omitempty" jsonschema:"description=Pagination cursor from a previous response"`
 }
 
@@ -115,13 +115,18 @@ type PostbackConfig struct {
 
 // StartInvestigationParams defines the parameters for starting an investigation.
 type StartInvestigationParams struct {
-	AlertType   string                  `json:"alertType,omitempty" jsonschema:"description=Type identifier for the alert (used with alertData to resolve schema automatically)"`
-	AlertData   map[string]any          `json:"alertData,omitempty" jsonschema:"description=Alert payload containing the data to investigate"`
-	AlertSchema any                     `json:"alertSchema,omitempty" jsonschema:"description=Either a catalog type string (e.g. RECORDED_FUTURE_PLAYBOOK_ALERT) or an array of schema annotations [{path\\, type}] describing data types in alertData"`
-	TemplateID  string                  `json:"templateId,omitempty" jsonschema:"description=Investigation template ID to use instead of alert data. Use with leads parameter."`
-	Leads       []InvestigationLead     `json:"leads,omitempty" jsonschema:"description=Initial leads when starting from a template"`
-	Title       string                  `json:"title,omitempty" jsonschema:"description=Title for the investigation"`
-	Postback    *PostbackConfig         `json:"postback,omitempty" jsonschema:"description=Postback URL configuration to receive notification when investigation completes"`
+	AlertType   string              `json:"alertType,omitempty" jsonschema:"description=Type identifier for the alert (used with alertData to resolve schema automatically)"`
+	AlertData   map[string]any      `json:"alertData,omitempty" jsonschema:"description=Alert payload containing the data to investigate"`
+	AlertSchema any                 `json:"alertSchema,omitempty" jsonschema:"description=Either a catalog type string (e.g. RECORDED_FUTURE_PLAYBOOK_ALERT) or an array of schema annotations [{path\\, type}] describing data types in alertData"`
+	TemplateID  string              `json:"templateId,omitempty" jsonschema:"description=Investigation template ID to use instead of alert data. Use with leads parameter."`
+	Leads       []InvestigationLead `json:"leads,omitempty" jsonschema:"description=Initial leads when starting from a template"`
+	Title       string              `json:"title,omitempty" jsonschema:"description=Title for the investigation"`
+	Description string              `json:"description,omitempty" jsonschema:"description=Free-form description for the investigation"`
+	Category    string              `json:"category,omitempty" jsonschema:"description=Investigation category (e.g. Malware\\, Credential Compromise\\, Privilege Escalation)"`
+	Tags        []string            `json:"tags,omitempty" jsonschema:"description=Tags to apply to the new investigation"`
+	StartTime   string              `json:"startTime,omitempty" jsonschema:"description=ISO-8601 timestamp marking the start of the investigation window (e.g. 2026-04-28T00:00:00Z)"`
+	EndTime     string              `json:"endTime,omitempty" jsonschema:"description=ISO-8601 timestamp marking the end of the investigation window"`
+	Postback    *PostbackConfig     `json:"postback,omitempty" jsonschema:"description=Postback URL configuration to receive notification when investigation completes"`
 }
 
 func startInvestigation(ctx context.Context, args StartInvestigationParams) (json.RawMessage, error) {
@@ -148,6 +153,21 @@ func startInvestigation(ctx context.Context, args StartInvestigationParams) (jso
 	}
 	if args.Title != "" {
 		payload["title"] = args.Title
+	}
+	if args.Description != "" {
+		payload["description"] = args.Description
+	}
+	if args.Category != "" {
+		payload["category"] = args.Category
+	}
+	if args.Tags != nil {
+		payload["tags"] = args.Tags
+	}
+	if args.StartTime != "" {
+		payload["startTime"] = args.StartTime
+	}
+	if args.EndTime != "" {
+		payload["endTime"] = args.EndTime
 	}
 	if args.Postback != nil {
 		payload["postback"] = args.Postback
@@ -199,12 +219,13 @@ var GetInvestigation = mcpcmdzero.MustTool(
 type UpdateInvestigationParams struct {
 	InvestigationID string   `json:"investigationId" jsonschema:"required,description=The unique identifier of the investigation (UUID)"`
 	Assignees       []string `json:"assignees,omitempty" jsonschema:"description=Array of user IDs to assign. Replaces all current assignees. Pass empty array to clear."`
-	Status          string   `json:"status,omitempty" jsonschema:"description=New status (investigating\\, completed\\, closed). Status transitions are validated."`
+	Status          string   `json:"status,omitempty" jsonschema:"description=New status (in-progress\\, on-hold\\, completed). Status transitions are validated."`
 	Tags            []string `json:"tags,omitempty" jsonschema:"description=Array of tags. Replaces all current tags. Pass empty array to clear."`
 	Severity        string   `json:"severity,omitempty" jsonschema:"description=Severity level (low\\, medium\\, high\\, critical)"`
 	Sensitivity     string   `json:"sensitivity,omitempty" jsonschema:"description=Sensitivity classification (clear\\, green\\, amber\\, red)"`
 	Category        string   `json:"category,omitempty" jsonschema:"description=Investigation category (e.g. Malware\\, Credential Compromise\\, Privilege Escalation)"`
 	Title           string   `json:"title,omitempty" jsonschema:"description=Updated investigation title"`
+	Description     string   `json:"description,omitempty" jsonschema:"description=Updated investigation description"`
 }
 
 func updateInvestigation(ctx context.Context, args UpdateInvestigationParams) (json.RawMessage, error) {
@@ -235,6 +256,9 @@ func updateInvestigation(ctx context.Context, args UpdateInvestigationParams) (j
 	if args.Title != "" {
 		payload["title"] = args.Title
 	}
+	if args.Description != "" {
+		payload["description"] = args.Description
+	}
 
 	body, err := json.Marshal(payload)
 	if err != nil {
@@ -246,7 +270,7 @@ func updateInvestigation(ctx context.Context, args UpdateInvestigationParams) (j
 
 var UpdateInvestigation = mcpcmdzero.MustTool(
 	"update_investigation",
-	"Update properties of an existing investigation. All fields are optional — only included fields are updated. Array fields (assignees, tags) are fully replaced. Status transitions are validated (e.g. cannot move from completed back to investigating).",
+	"Update properties of an existing investigation. All fields are optional — only included fields are updated. Array fields (assignees, tags) are fully replaced. Status transitions are validated (e.g. cannot move from completed back to in-progress).",
 	updateInvestigation,
 	mcp.WithTitleAnnotation("Update investigation"),
 )

@@ -9,6 +9,7 @@ from ..models import (
     CreateInvestigationResponse,
     Investigation,
     InvestigationSubject,
+    InvestigationSummary,
     Postback,
     TypeAnnotation,
     UpdateInvestigationRequest,
@@ -35,14 +36,20 @@ class InvestigationsResource(BaseResource):
         *,
         filter: str | None = None,
         limit: int | None = None,
+        method: str = "GET",
         organization_id: str | UUID | None = None,
-    ) -> PaginatedIterator[Investigation]:
+    ) -> PaginatedIterator[InvestigationSummary]:
+        """Paginate the investigation list. Returns InvestigationSummary
+        objects (the lighter schema the API returns on list); call get(id)
+        for the full Investigation. Pass ``method='QUERY'`` for filters
+        long enough to exceed safe URL length."""
         return self._paginate(
             self._path(organization_id),
-            Investigation,
+            InvestigationSummary,
             "investigations",
             filter=filter,
             limit=limit,
+            method=method,
         )
 
     def get(self, investigation_id: str | UUID, *, organization_id: str | UUID | None = None) -> Investigation:
