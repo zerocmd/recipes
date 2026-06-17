@@ -2,7 +2,7 @@
 SQLite-backed correlation store.
 
 One row per discovered notable. Tracks the full lifecycle from discovery
-through CZ submission, verdict receipt, and writeback.
+through C0 submission, verdict receipt, and writeback.
 """
 
 import sqlite3
@@ -31,8 +31,8 @@ class Record:
     raw_notable: str          # JSON blob of the original notable fields
     state: State = State.DISCOVERED
     investigation_id: Optional[str] = None
-    cz_action: Optional[str] = None          # "created" | "merged"
-    cz_status: Optional[str] = None          # CZ status at verdict capture (pending-review|in-progress|...)
+    c0_action: Optional[str] = None          # "created" | "merged"
+    c0_status: Optional[str] = None          # C0 status at verdict capture (pending-review|in-progress|...)
     verdict: Optional[str] = None
     confidence: Optional[str] = None
     severity: Optional[str] = None
@@ -60,8 +60,8 @@ CREATE TABLE IF NOT EXISTS records (
     raw_notable         TEXT NOT NULL,
     state               TEXT NOT NULL DEFAULT 'discovered',
     investigation_id    TEXT,
-    cz_action           TEXT,
-    cz_status           TEXT,
+    c0_action           TEXT,
+    c0_status           TEXT,
     verdict             TEXT,
     confidence          TEXT,
     severity            TEXT,
@@ -94,7 +94,7 @@ class Store:
         self._conn.row_factory = sqlite3.Row
         self._conn.executescript(_SCHEMA)
         # Migrate existing databases that predate these columns.
-        for col in ("last_polled_at TEXT", "cz_status TEXT",
+        for col in ("last_polled_at TEXT", "c0_status TEXT",
                     "category TEXT", "impact TEXT", "description TEXT"):
             try:
                 self._conn.execute(f"ALTER TABLE records ADD COLUMN {col}")
@@ -115,14 +115,14 @@ class Store:
             """
             INSERT INTO records (
                 event_id, rule_name, alert_type, raw_notable, state,
-                investigation_id, cz_action, cz_status, verdict, confidence, severity,
+                investigation_id, c0_action, c0_status, verdict, confidence, severity,
                 summary, console_url, category, impact, description,
                 submit_attempts, poll_attempts,
                 writeback_attempts, last_error, discovered_at, submitted_at,
                 verdict_at, written_back_at, last_polled_at
             ) VALUES (
                 :event_id, :rule_name, :alert_type, :raw_notable, :state,
-                :investigation_id, :cz_action, :cz_status, :verdict, :confidence, :severity,
+                :investigation_id, :c0_action, :c0_status, :verdict, :confidence, :severity,
                 :summary, :console_url, :category, :impact, :description,
                 :submit_attempts, :poll_attempts,
                 :writeback_attempts, :last_error, :discovered_at, :submitted_at,
@@ -131,8 +131,8 @@ class Store:
             ON CONFLICT(event_id) DO UPDATE SET
                 state              = excluded.state,
                 investigation_id   = excluded.investigation_id,
-                cz_action          = excluded.cz_action,
-                cz_status          = excluded.cz_status,
+                c0_action          = excluded.c0_action,
+                c0_status          = excluded.c0_status,
                 verdict            = excluded.verdict,
                 confidence         = excluded.confidence,
                 severity           = excluded.severity,
@@ -227,8 +227,8 @@ def _record_to_row(rec: Record) -> dict:
         "raw_notable": rec.raw_notable,
         "state": rec.state.value,
         "investigation_id": rec.investigation_id,
-        "cz_action": rec.cz_action,
-        "cz_status": rec.cz_status,
+        "c0_action": rec.c0_action,
+        "c0_status": rec.c0_status,
         "verdict": rec.verdict,
         "confidence": rec.confidence,
         "severity": rec.severity,
@@ -257,8 +257,8 @@ def _row_to_record(row: sqlite3.Row) -> Record:
         raw_notable=row["raw_notable"],
         state=State(row["state"]),
         investigation_id=row["investigation_id"],
-        cz_action=row["cz_action"],
-        cz_status=row["cz_status"],
+        c0_action=row["c0_action"],
+        c0_status=row["c0_status"],
         verdict=row["verdict"],
         confidence=row["confidence"],
         severity=row["severity"],

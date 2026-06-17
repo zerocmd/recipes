@@ -5,36 +5,36 @@ SCHEMAS is the single source of truth for which alert types are forwarded to
 Command Zero. Any alert type not present in SCHEMAS is silently dropped at
 discovery time and never submitted.
 
-The value for each entry controls how CZ extracts observables:
+The value for each entry controls how C0 extracts observables:
 
   - A list of TypeAnnotation dicts: the connector sends this schema on the
-    first submission of the alert type so CZ knows which fields contain
-    observables. CZ caches the schema per alertType, so subsequent
+    first submission of the alert type so C0 knows which fields contain
+    observables. C0 caches the schema per alertType, so subsequent
     submissions omit it.
 
-  - None: the alert type is allowed but no schema is provided. CZ will use
+  - None: the alert type is allowed but no schema is provided. C0 will use
     auto-schema to infer observables from the alert data automatically.
 
 Adding a new alert type with an explicit schema:
   1. Add an entry to SCHEMAS keyed by the full alertType string.
-  2. Use only types from VALID_CZ_TYPES (sourced from
+  2. Use only types from VALID_C0_TYPES (sourced from
      autonomic/etc/ontology/type_name_mapping.yaml). Invalid types cause a
      400 "Unknown type" rejection at submission time; a warning is emitted
-     at import time if any type in SCHEMAS is not in VALID_CZ_TYPES.
+     at import time if any type in SCHEMAS is not in VALID_C0_TYPES.
 
 Adding a new alert type with auto-schema (no explicit schema):
   1. Add an entry to SCHEMAS with None as the value.
-  2. CZ will infer observables automatically on the first submission.
+  2. C0 will infer observables automatically on the first submission.
 """
 
 import warnings
 
 # ---------------------------------------------------------------------------
-# Authoritative CZ lead types
+# Authoritative C0 lead types
 # Sourced from: autonomic/etc/ontology/type_name_mapping.yaml
 # ---------------------------------------------------------------------------
 
-VALID_CZ_TYPES: frozenset[str] = frozenset({
+VALID_C0_TYPES: frozenset[str] = frozenset({
     # Alert metadata
     "ALERT_DESCRIPTION",
     "ALERT_ID",
@@ -339,8 +339,8 @@ SCHEMAS: dict[str, list[dict] | None] = {
         {"path": "dest_ip",           "type": "IP_ADDRESS"},
         {"path": "dest",              "type": "HOST_NAME"},
     ],
-    # None = allow this alert type but let CZ auto-schema infer the observables.
-    # Use this when you want a rule forwarded to CZ without defining a schema manually.
+    # None = allow this alert type but let C0 auto-schema infer the observables.
+    # Use this when you want a rule forwarded to C0 without defining a schema manually.
     "SplunkES:Web - Abnormally High Number of HTTP Method Events By Src - Rule": None,
 }
 
@@ -354,10 +354,10 @@ def _validate_schemas() -> None:
             continue  # auto-schema entry — nothing to validate
         for annotation in annotations:
             t = annotation.get("type", "")
-            if t not in VALID_CZ_TYPES:
+            if t not in VALID_C0_TYPES:
                 warnings.warn(
                     f"schemas.py: '{t}' in schema for '{alert_type}' is not a valid "
-                    f"CZ lead type — submission will be rejected with 400",
+                    f"C0 lead type — submission will be rejected with 400",
                     stacklevel=2,
                 )
 

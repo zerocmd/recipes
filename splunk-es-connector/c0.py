@@ -2,9 +2,9 @@
 Command Zero API client.
 
 Handles two operations:
-  1. Submit a Splunk notable as a CZ investigation with an explicit alertSchema
+  1. Submit a Splunk notable as a C0 investigation with an explicit alertSchema
      (Case 2). The schema is sent on the first submission of each alertType so
-     CZ knows how to extract observables; subsequent submissions omit it.
+     C0 knows how to extract observables; subsequent submissions omit it.
   2. Poll a batch of open investigations for verdict-ready status.
 """
 
@@ -19,7 +19,7 @@ from config import Config
 log = logging.getLogger(__name__)
 
 # A verdict is ready once automation finishes. The verdict persists across every
-# post-automation status (the CZ spec's `completed` example still carries a verdict),
+# post-automation status (the C0 spec's `completed` example still carries a verdict),
 # so we don't restrict to `pending-review` — otherwise a verdict picked up after an
 # analyst has already moved the case past pending-review would be lost.
 POST_AUTOMATION_STATUSES = {"pending-review", "in-progress", "on-hold", "completed"}
@@ -68,13 +68,13 @@ class VerdictResult:
         return self.status == "failed"
 
 
-class CZClient:
+class C0Client:
     def __init__(self, cfg: Config):
         self._cfg = cfg
         self._client = httpx.AsyncClient(
-            base_url=cfg.cz_api_base_url,
+            base_url=cfg.c0_api_base_url,
             headers={
-                "Authorization": f"Bearer {cfg.cz_bearer_token}",
+                "Authorization": f"Bearer {cfg.c0_bearer_token}",
                 "Content-Type": "application/json",
             },
             timeout=30,
@@ -92,7 +92,7 @@ class CZClient:
                 return resp
             retry_after = int(resp.headers.get("Retry-After", _DEFAULT_RETRY_AFTER_S))
             log.warning(
-                "CZ rate-limited (429); sleeping %ds before retry (attempt %d/%d)",
+                "C0 rate-limited (429); sleeping %ds before retry (attempt %d/%d)",
                 retry_after, attempt + 1, _MAX_429_RETRIES,
             )
             await asyncio.sleep(retry_after)
@@ -112,13 +112,13 @@ class CZClient:
         schema: Optional[list[dict]] = None,
     ) -> SubmitResult:
         """
-        Submit a notable as a CZ investigation.
+        Submit a notable as a C0 investigation.
 
         Pass `schema` (a list of TypeAnnotation dicts) on the first submission
-        of a given alertType so CZ can extract the right observables. CZ caches
+        of a given alertType so C0 can extract the right observables. C0 caches
         the schema per alertType, so subsequent submissions can omit it.
         """
-        # _alert_id must be set in alertData so CZ uses our event_id as the
+        # _alert_id must be set in alertData so C0 uses our event_id as the
         # correlation key rather than generating a random UUID (investigations.go:395).
         alert_data["_alert_id"] = event_id
 
@@ -132,10 +132,10 @@ class CZClient:
             payload["alertSchema"] = schema
             log.debug("Including alertSchema (%d annotations) for type %s", len(schema), alert_type)
 
-        log.info("Submitting notable %s as CZ investigation (type=%s)", event_id, alert_type)
+        log.info("Submitting notable %s as C0 investigation (type=%s)", event_id, alert_type)
         resp = await self._request(
             "post",
-            f"/organizations/{self._cfg.cz_org_id}/investigations",
+            f"/organizations/{self._cfg.c0_org_id}/investigations",
             json=payload,
         )
         resp.raise_for_status()
@@ -175,7 +175,7 @@ class CZClient:
     async def _get_investigation(self, investigation_id: str) -> VerdictResult:
         resp = await self._request(
             "get",
-            f"/organizations/{self._cfg.cz_org_id}/investigations/{investigation_id}",
+            f"/organizations/{self._cfg.c0_org_id}/investigations/{investigation_id}",
         )
         if resp.status_code == 404:
             log.warning("Investigation %s not found (archived or deleted); marking failed", investigation_id)
@@ -208,25 +208,25 @@ class CZClient:
         )
 
     async def health_check(self) -> None:
-        """Verify CZ API connectivity and auth. Raises RuntimeError with a human-readable message."""
+        """Verify C0 API connectivity and auth. Raises RuntimeError with a human-readable message."""
         try:
             resp = await self._client.get(
-                f"/organizations/{self._cfg.cz_org_id}/investigations"
+                f"/organizations/{self._cfg.c0_org_id}/investigations"
             )
             resp.raise_for_status()
         except httpx.ConnectError as exc:
             raise RuntimeError(
-                f"Cannot connect to CZ API at {self._cfg.cz_api_base_url}"
+                f"Cannot connect to C0 API at {self._cfg.c0_api_base_url}"
             ) from exc
         except httpx.HTTPStatusError as exc:
             status = exc.response.status_code
             if status == 401:
-                raise RuntimeError("CZ authentication failed — check CZ_BEARER_TOKEN") from exc
+                raise RuntimeError("C0 authentication failed — check C0_BEARER_TOKEN") from exc
             if status in (403, 404):
                 raise RuntimeError(
-                    f"CZ org not found or access denied — check CZ_ORG_ID ({self._cfg.cz_org_id!r})"
+                    f"C0 org not found or access denied — check C0_ORG_ID ({self._cfg.c0_org_id!r})"
                 ) from exc
-            raise RuntimeError(f"CZ health check failed (HTTP {status})") from exc
+            raise RuntimeError(f"C0 health check failed (HTTP {status})") from exc
 
     async def close(self) -> None:
         await self._client.aclose()

@@ -1,13 +1,13 @@
 """
-CZ ⇄ Splunk ES Connector — main loop.
+C0 ⇄ Splunk ES Connector — main loop.
 
 Lifecycle per notable:
   1. Poll Splunk index=notable → discover new notables (checkpoint-based)
-  2. Submit each new notable to CZ. Alert types in schemas.py are forwarded;
+  2. Submit each new notable to C0. Alert types in schemas.py are forwarded;
      all others are silently dropped. If an explicit schema is defined for the
-     alert type it is sent on the first submission (CZ caches it); if the entry
-     is None, CZ uses auto-schema to infer observables automatically.
-  3. Poll CZ for verdict-ready status (status=pending-review + non-empty verdict)
+     alert type it is sent on the first submission (C0 caches it); if the entry
+     is None, C0 uses auto-schema to infer observables automatically.
+  3. Poll C0 for verdict-ready status (status=pending-review + non-empty verdict)
   4. Write the verdict back onto the ES notable (notable_update comment + HEC event)
 """
 
@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from config import Config
-from cz import CZClient
+from c0 import C0Client
 from schemas import get_schema, is_allowed
 from splunk import SplunkClient
 from store import Record, State, Store
@@ -49,7 +49,7 @@ class Connector:
         self._cfg = cfg
         self._store = Store(cfg.db_path)
         self._splunk = SplunkClient(cfg)
-        self._cz = CZClient(cfg)
+        self._c0 = C0Client(cfg)
         self._running = False
         self._submitted_schemas: set[str] = set()  # alert types whose schema has been sent this session
 
@@ -59,7 +59,7 @@ class Connector:
 
     async def run(self) -> None:
         self._running = True
-        log.info("Connector starting (Splunk=%s, CZ org=%s)", self._cfg.splunk_rest_url, self._cfg.cz_org_id)
+        log.info("Connector starting (Splunk=%s, C0 org=%s)", self._cfg.splunk_rest_url, self._cfg.c0_org_id)
 
         while self._running:
             try:
@@ -119,7 +119,7 @@ class Connector:
                 log.info("Discovered notable %s (type=%s)", event_id, alert_type)
 
     # ------------------------------------------------------------------
-    # Step 2: submit discovered notables to CZ
+    # Step 2: submit discovered notables to C0
     # ------------------------------------------------------------------
 
     async def _submit_pending(self) -> None:
@@ -136,11 +136,11 @@ class Connector:
             description = notable.get("rule_description") or f"Splunk ES notable: {rec.rule_name}"
 
             try:
-                # Send the schema on the first submission of each alert type so CZ
+                # Send the schema on the first submission of each alert type so C0
                 # knows which fields contain observables; omit it on subsequent
-                # submissions (CZ caches it). For auto-schema entries (None value in
+                # submissions (C0 caches it). For auto-schema entries (None value in
                 # schemas.py) get_schema returns None and no alertSchema is sent —
-                # CZ will infer observables automatically.
+                # C0 will infer observables automatically.
                 if rec.alert_type not in self._submitted_schemas:
                     schema = get_schema(rec.alert_type)
                     if schema is not None:
@@ -150,7 +150,7 @@ class Connector:
                 else:
                     schema = None
 
-                result = await self._cz.submit(
+                result = await self._c0.submit(
                     event_id=rec.event_id,
                     alert_type=rec.alert_type,
                     title=title,
@@ -160,7 +160,7 @@ class Connector:
                 )
                 self._submitted_schemas.add(rec.alert_type)
                 rec.investigation_id = result.investigation_id
-                rec.cz_action = result.action
+                rec.c0_action = result.action
                 rec.submitted_at = datetime.now(timezone.utc)
                 rec.submit_attempts += 1
                 rec.last_error = None
@@ -177,20 +177,20 @@ class Connector:
 
             self._store.upsert(rec)
 
-            if self._cfg.cz_submit_delay > 0:
-                await asyncio.sleep(self._cfg.cz_submit_delay)
+            if self._cfg.c0_submit_delay > 0:
+                await asyncio.sleep(self._cfg.c0_submit_delay)
 
     # ------------------------------------------------------------------
-    # Step 3: poll CZ for verdict-ready investigations
+    # Step 3: poll C0 for verdict-ready investigations
     # ------------------------------------------------------------------
 
     def _due_for_poll(self, rec: Record) -> bool:
-        """Return True if enough time has passed since the last CZ poll for this record."""
+        """Return True if enough time has passed since the last C0 poll for this record."""
         if rec.last_polled_at is None:
             return True
         wait = min(
-            self._cfg.cz_poll_interval * (2 ** rec.poll_attempts),
-            self._cfg.cz_poll_max_backoff,
+            self._cfg.c0_poll_interval * (2 ** rec.poll_attempts),
+            self._cfg.c0_poll_max_backoff,
         )
         elapsed = (datetime.now(timezone.utc) - rec.last_polled_at).total_seconds()
         return elapsed >= wait
@@ -219,7 +219,7 @@ class Connector:
             return
 
         inv_ids = list({r.investigation_id for r in due if r.investigation_id})
-        verdicts = await self._cz.poll_pending(inv_ids)
+        verdicts = await self._c0.poll_pending(inv_ids)
 
         for vr in verdicts:
             if vr.is_ready:
@@ -233,7 +233,7 @@ class Connector:
                     rec.severity = vr.severity
                     rec.summary = vr.summary
                     rec.console_url = vr.console_url
-                    rec.cz_status = vr.status
+                    rec.c0_status = vr.status
                     rec.category = vr.category
                     rec.impact = vr.impact
                     rec.description = vr.description
@@ -245,7 +245,7 @@ class Connector:
                 affected = self._store.get_by_investigation(vr.investigation_id)
                 for rec in affected:
                     rec.state = State.FAILED
-                    rec.last_error = "CZ investigation failed"
+                    rec.last_error = "C0 investigation failed"
                     self._store.upsert(rec)
                     log.warning("Investigation %s failed for notable %s", vr.investigation_id, rec.event_id)
 
@@ -304,7 +304,7 @@ class Connector:
                     verdict=rec.verdict,
                     confidence=rec.confidence,
                     severity=rec.severity,
-                    status=rec.cz_status or "pending-review",
+                    status=rec.c0_status or "pending-review",
                     console_url=rec.console_url,
                     enrichment_index=self._cfg.enrichment_index,
                     category=rec.category,
@@ -326,7 +326,7 @@ class Connector:
 
     async def close(self) -> None:
         await self._splunk.close()
-        await self._cz.close()
+        await self._c0.close()
         self._store.close()
 
 
@@ -337,12 +337,12 @@ class Connector:
 async def preflight(cfg: Config) -> None:
     """
     Fast-fail startup check. Validates that required config fields aren't placeholders,
-    then verifies connectivity and auth for both Splunk REST and the CZ API.
+    then verifies connectivity and auth for both Splunk REST and the C0 API.
     Raises SystemExit(1) on any failure so the process exits cleanly without a traceback.
     """
     required = [
-        ("CZ_ORG_ID", cfg.cz_org_id),
-        ("CZ_BEARER_TOKEN", cfg.cz_bearer_token),
+        ("C0_ORG_ID", cfg.c0_org_id),
+        ("C0_BEARER_TOKEN", cfg.c0_bearer_token),
         ("SPLUNK_REST_URL", cfg.splunk_rest_url),
         ("SPLUNK_SVC_TOKEN", cfg.splunk_svc_token),
     ]
@@ -353,15 +353,15 @@ async def preflight(cfg: Config) -> None:
         raise SystemExit(1)
 
     splunk = SplunkClient(cfg)
-    cz = CZClient(cfg)
+    cz = C0Client(cfg)
     try:
         log.info("Preflight: checking Splunk REST (%s)...", cfg.splunk_rest_url)
         await splunk.health_check()
         log.info("Preflight: Splunk OK")
 
-        log.info("Preflight: checking CZ API (org=%s)...", cfg.cz_org_id)
+        log.info("Preflight: checking C0 API (org=%s)...", cfg.c0_org_id)
         await cz.health_check()
-        log.info("Preflight: CZ API OK")
+        log.info("Preflight: C0 API OK")
     except RuntimeError as exc:
         log.error("Preflight failed: %s", exc)
         raise SystemExit(1) from exc

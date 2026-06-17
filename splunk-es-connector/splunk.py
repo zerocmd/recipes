@@ -1,7 +1,7 @@
 """
 Splunk client — two responsibilities:
   1. Poll index=notable for new notables since the last checkpoint.
-  2. Write the CZ verdict back onto the notable (notable_update comment + HEC event).
+  2. Write the C0 verdict back onto the notable (notable_update comment + HEC event).
 """
 
 import json
@@ -146,7 +146,7 @@ class SplunkClient:
         impact: Optional[str] = None,
         description: Optional[str] = None,
     ) -> None:
-        """Post a CZ verdict comment onto the ES notable via notable_update."""
+        """Post a C0 verdict comment onto the ES notable via notable_update."""
         comment = _build_comment(
             verdict, confidence, severity, summary, console_url, investigation_id,
             category, impact, description,
@@ -178,23 +178,23 @@ class SplunkClient:
         impact: Optional[str] = None,
         description: Optional[str] = None,
     ) -> None:
-        """Send a structured enrichment event to the HEC cz_enrichment index."""
+        """Send a structured enrichment event to the HEC c0_enrichment index."""
         if not self._hec:
             log.debug("HEC not configured; skipping enrichment event")
             return
 
         payload = {
             "index": enrichment_index,
-            "sourcetype": "cz:enrichment",
+            "sourcetype": "c0:enrichment",
             "event": {
                 "event_id": event_id,
-                "cz_investigation_id": investigation_id,
-                "cz_verdict": verdict,
-                "cz_severity": severity,
-                "cz_status": status,
-                "cz_console_url": console_url,
-                "cz_impact": impact,
-                "cz_description": description,
+                "c0_investigation_id": investigation_id,
+                "c0_verdict": verdict,
+                "c0_severity": severity,
+                "c0_status": status,
+                "c0_console_url": console_url,
+                "c0_impact": impact,
+                "c0_description": description,
             },
         }
         resp = await self._hec.post("/services/collector/event", json=payload)
@@ -245,5 +245,5 @@ def _build_comment(
         lines.append(f"Description: {description}")
     if console_url:
         lines.append(f"Investigation: {console_url}")
-    lines.append(f"(CZ investigation ID: {investigation_id})")
+    lines.append(f"(C0 investigation ID: {investigation_id})")
     return "\n".join(lines)

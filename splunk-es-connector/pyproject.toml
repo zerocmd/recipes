@@ -1,5 +1,5 @@
 [project]
-name = "cz-splunk-connector"
+name = "c0-splunk-connector"
 version = "0.1.0"
 description = "Command Zero ⇄ Splunk ES connector"
 requires-python = ">=3.11"
